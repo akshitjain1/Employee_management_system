@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}Change Password - EMS{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-body p-5">
+                <h3 class="card-title text-center mb-4">Change Password Required</h3>
+                <p class="text-center text-muted">You must change your temporary password before continuing.</p>
+                
+                {% if not otp_sent %}
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i> Click below to receive an OTP to your email for verification.
+                </div>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-grid">
+                        <button type="submit" name="send_otp" class="btn btn-primary">Send OTP to Email</button>
+                    </div>
+                </form>
+                {% else %}
+                <div class="alert alert-success">
+                    <i class="bi bi-check-circle"></i> OTP sent to your email!
+                </div>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="otp_code" class="form-label">OTP Code</label>
+                        <input type="text" class="form-control text-center" id="otp_code" name="otp_code" 
+                               maxlength="6" pattern="\d{6}" required 
+                               style="font-size: 20px; letter-spacing: 5px;">
+                        <div class="form-text">Enter the 6-digit code sent to your email</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="new_password" class="form-label">New Password</label>
+                        <input type="password" class="form-control" id="new_password" name="new_password" required minlength="8">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="confirm_password" class="form-label">Confirm Password</label>
+                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-success">Change Password</button>
+                    </div>
+                </form>
+                
+                <div class="text-center mt-3">
+                    <p class="text-muted small">OTP valid for 5 minutes. Maximum 3 attempts.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

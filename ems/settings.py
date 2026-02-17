@@ -11,21 +11,28 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
+from dotenv import load_dotenv
+# from django.core.exceptions import ImproperlyConfigured  # might need this later
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Load environment variables from .env file
+load_dotenv(BASE_DIR / '.env')
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-d=)y^*w5zu3l%pd(!9wra_$8kxg)b-l)ri&$qv0v4d*i$2&j&k'
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-default-key-change-this')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# TODO: Set DEBUG=False before deploying to production
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
 
 # Application definition
@@ -37,10 +44,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'users',
     'admin_panel',
     'hr_module',
     'employee_module',
-    'hr_module'
 ]
 
 MIDDLEWARE = [
@@ -78,8 +85,8 @@ WSGI_APPLICATION = 'ems.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.sqlite3'),
+        'NAME': BASE_DIR / os.getenv('DB_NAME', 'db.sqlite3'),
     }
 }
 
@@ -119,8 +126,22 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
+STATICFILES_DIRS = [BASE_DIR / 'static']
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Custom user model
+AUTH_USER_MODEL = 'users.CustomUser'
+
+# Email Configuration
+# Using Gmail SMTP for sending emails
+EMAIL_BACKEND = os.getenv('EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
+EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', '587'))
+EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True') == 'True'
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', f'EMS <{EMAIL_HOST_USER}>')
+
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'admin_dashboard'

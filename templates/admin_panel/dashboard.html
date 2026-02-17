@@ -1,0 +1,219 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard - EMS{% endblock %}
+
+{% block content %}
+<!-- dashboard stats -->
+<div class="row">
+    <div class="col-12">
+        <h2 style="margin-bottom: 20px;"><i class="bi bi-speedometer2"></i> Admin Dashboard</h2>
+    </div>
+</div>
+
+<!-- Quick actions -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card border-primary">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-lightning-fill"></i> Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-2">
+                    <div class="col-md-3">
+                        <a href="{% url 'create_employee' %}" class="btn btn-primary w-100">
+                            <i class="bi bi-person-plus-fill"></i> Add Employee
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{% url 'employee_list' %}" class="btn btn-info w-100">
+                            <i class="bi bi-people-fill"></i> View All Employees
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{% url 'export_employees_csv' %}" class="btn btn-success w-100">
+                            <i class="bi bi-download"></i> Export to CSV
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{% url 'audit_logs' %}" class="btn btn-secondary w-100">
+                            <i class="bi bi-journal-text"></i> Audit Logs
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-people-fill"></i> Total Employees</h5>
+                <h2 class="mb-0">{{ total_employees }}</h2>
+                <small>All employees in system</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-person-check-fill"></i> Active Employees</h5>
+                <h2 class="mb-0">{{ active_employees }}</h2>
+                <small>Currently active</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-person-x-fill"></i> Inactive Employees</h5>
+                <h2 class="mb-0">{{ inactive_employees }}</h2>
+                <small>Deactivated accounts</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-person-badge-fill"></i> Total HR</h5>
+                <h2 class="mb-0">{{ total_hr }}</h2>
+                <small>HR personnel</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts -->
+<div class="row g-3 mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-cash-stack"></i> Total Salary Expenditure</h5>
+                <h2 class="text-success">₹{{ total_salary|floatformat:2 }}</h2>
+                <small class="text-muted">Monthly payroll estimate</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-bar-chart-fill"></i> Department Distribution</h5>
+                <canvas id="departmentChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent employees -->
+<div class="row g-3">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-clock-history"></i> Recent Employees</h5>
+                <a href="{% url 'employee_list' %}" class="btn btn-sm btn-primary">View All</a>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Employee ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Department</th>
+                                <th>Status</th>
+                                <th>Joined</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for emp in recent_employees %}
+                            <tr>
+                                <td>{{ emp.employee_id|default:"N/A" }}</td>
+                                <td>{{ emp.get_full_name|default:"N/A" }}</td>
+                                <td>{{ emp.email }}</td>
+                                <td><span class="badge bg-secondary">{{ emp.role }}</span></td>
+                                <td>{{ emp.department|default:"N/A" }}</td>
+                                <td>
+                                    {% if emp.account_locked %}
+                                    <span class="badge bg-dark">Locked</span>
+                                    {% elif emp.is_active %}
+                                    <span class="badge bg-success">Active</span>
+                                    {% else %}
+                                    <span class="badge bg-danger">Inactive</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ emp.date_joined|date:"Y-m-d" }}</td>
+                                <td>
+                                    <a href="{% url 'employee_detail' emp.id %}" class="btn btn-sm btn-info">
+                                        <i class="bi bi-eye-fill"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="8" class="text-center">No employees yet</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // chart for departments
+    var deptData = {{ departments|safe }};
+    if (!deptData) {
+        deptData = [];
+    }
+    var labels = [];
+    var counts = [];
+    
+    for(var i=0; i<deptData.length; i++) {
+        labels.push(deptData[i].department || 'N/A');
+        counts.push(deptData[i].count);
+    }
+    
+    if (labels.length > 0) {
+        var ctx = document.getElementById('departmentChart');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: counts,
+                    backgroundColor: [
+                        '#FF6384',
+                        '#36A2EB',
+                        '#FFCE56',
+                        '#4BC0C0',
+                        '#9966FF',
+                        '#FF9F40',
+                        '#FF5733',
+                        '#C70039'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                    }
+                }
+            }
+        });
+    } else {
+        document.getElementById('departmentChart').parentElement.innerHTML = '<p class="text-center text-muted">No data available</p>';
+    }
+</script>
+{% endblock %}

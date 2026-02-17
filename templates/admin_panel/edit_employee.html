@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Employee - EMS{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="mb-0"><i class="bi bi-pencil-fill"></i> Edit Employee</h4>
+                <a href="{% url 'employee_detail' employee.id %}" class="btn btn-secondary btn-sm">
+                    <i class="bi bi-arrow-left"></i> Back
+                </a>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.first_name.id_for_label }}" class="form-label">First Name *</label>
+                            {{ form.first_name }}
+                            {% if form.first_name.errors %}
+                                <div class="text-danger">{{ form.first_name.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.last_name.id_for_label }}" class="form-label">Last Name *</label>
+                            {{ form.last_name }}
+                            {% if form.last_name.errors %}
+                                <div class="text-danger">{{ form.last_name.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.email.id_for_label }}" class="form-label">Email *</label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                            <div class="text-danger">{{ form.email.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.phone.id_for_label }}" class="form-label">Phone</label>
+                        {{ form.phone }}
+                        {% if form.phone.errors %}
+                            <div class="text-danger">{{ form.phone.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.department.id_for_label }}" class="form-label">Department</label>
+                            {{ form.department }}
+                            {% if form.department.errors %}
+                                <div class="text-danger">{{ form.department.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.salary.id_for_label }}" class="form-label">Salary</label>
+                            {{ form.salary }}
+                            {% if form.salary.errors %}
+                                <div class="text-danger">{{ form.salary.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.date_of_joining.id_for_label }}" class="form-label">Date of Joining</label>
+                        {{ form.date_of_joining }}
+                        {% if form.date_of_joining.errors %}
+                            <div class="text-danger">{{ form.date_of_joining.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="form-check">
+                            {{ form.is_active }}
+                            <label class="form-check-label" for="{{ form.is_active.id_for_label }}">
+                                Account Active
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">Update Employee</button>
+                        <a href="{% url 'employee_detail' employee.id %}" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    input, select {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+    }
+    input[type="checkbox"] {
+        width: auto;
+    }
+</style>
+{% endblock %}
