@@ -89,8 +89,8 @@ python manage.py runserver
 
 ### 8. Login
 - Open browser: http://127.0.0.1:8000/
-- Username: admin
-- Password: admin (or what you set)
+- Username: write your username
+- Password: write your password (or what you set)
 
 ## How to Use
 
