@@ -1,0 +1,73 @@
+{% extends "employee_dashboard/base.html" %}
+{% block title %}My Tasks{% endblock %}
+
+{% block content %}
+<h2 class="text-2xl font-semibold mb-6">My Tasks</h2>
+
+<table class="w-full bg-white shadow rounded">
+<thead class="bg-gray-200">
+<tr>
+    <th class="p-3">Title</th>
+    <th class="p-3">Deadline</th>
+    <th class="p-3">Status</th>
+    <th class="p-3">Action</th>
+</tr>
+</thead>
+
+<tbody>
+{% for task in tasks %}
+<tr class="border-t align-top">
+    <td class="p-3">{{ task.title }}</td>
+    <td class="p-3">{{ task.deadline }}</td>
+    <td class="p-3 font-semibold">{{ task.status }}</td>
+
+    <td class="p-3 space-y-2">
+
+        {% if task.status == "Assigned" %}
+        <!-- ACCEPT -->
+        <form method="post" action="{% url 'accept_task' task.id %}">
+            {% csrf_token %}
+            <button class="bg-green-500 text-white px-3 py-1 rounded">
+                Accept
+            </button>
+        </form>
+
+        <!-- REJECT WITH REASON -->
+        <form method="post" action="{% url 'reject_task' task.id %}">
+            {% csrf_token %}
+            <textarea name="reason" required
+                placeholder="Reason for rejection"
+                class="w-full border p-1 rounded"></textarea>
+            <button class="bg-red-500 text-white px-3 py-1 rounded mt-1">
+                Reject
+            </button>
+        </form>
+
+        {% elif task.status == "Accepted" %}
+        <!-- COMPLETE WITH FILE -->
+        <form method="post" enctype="multipart/form-data"
+              action="{% url 'complete_task' task.id %}">
+            {% csrf_token %}
+            <input type="file" name="completion_file" required
+                   class="block mb-2">
+            <button class="bg-blue-500 text-white px-3 py-1 rounded">
+                Mark Completed
+            </button>
+        </form>
+
+        {% else %}
+        <span class="text-gray-400">No Action</span>
+        {% endif %}
+
+    </td>
+</tr>
+{% empty %}
+<tr>
+    <td colspan="4" class="p-5 text-center text-gray-500">
+        No tasks assigned
+    </td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,105 @@
+{% extends "employee_dashboard/base.html" %}
+{% block title %}My Salary{% endblock %}
+
+{% block content %}
+
+<!-- ===== PAGE HEADER ===== -->
+<div class="mb-6">
+    <h2 class="text-2xl font-semibold">Salary Details</h2>
+    <p class="text-gray-500">
+        View your credited salary and download payslips
+    </p>
+</div>
+
+<!-- ===== SALARY SUMMARY (LATEST) ===== -->
+<div class="bg-white p-6 rounded shadow mb-8">
+    <h3 class="text-lg font-semibold mb-4">Latest Salary</h3>
+
+    {% if salaries|length > 0 %}
+        {% with latest=salaries.0 %}
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div>
+                <p class="text-gray-500 text-sm">Month</p>
+                <p class="font-semibold">{{ latest.month }}</p>
+            </div>
+            <div>
+                <p class="text-gray-500 text-sm">Basic</p>
+                <p class="font-semibold">₹{{ latest.basic }}</p>
+            </div>
+            <div>
+                <p class="text-gray-500 text-sm">Deductions</p>
+                <p class="font-semibold text-red-600">₹{{ latest.deductions }}</p>
+            </div>
+            <div>
+                <p class="text-gray-500 text-sm">Net Salary</p>
+                <p class="font-semibold text-green-600">
+                    ₹{{ latest.net_salary }}
+                </p>
+            </div>
+        </div>
+        {% endwith %}
+    {% else %}
+        <p class="text-gray-500">No salary credited yet.</p>
+    {% endif %}
+</div>
+
+<!-- ===== SALARY HISTORY ===== -->
+<div class="bg-white p-6 rounded shadow">
+    <h3 class="text-lg font-semibold mb-4">Salary History</h3>
+
+    <table class="w-full border-collapse">
+        <thead class="bg-gray-200">
+            <tr>
+                <th class="p-3 text-left">Month</th>
+                <th class="p-3 text-left">Basic</th>
+                <th class="p-3 text-left">Deductions</th>
+                <th class="p-3 text-left">Net Salary</th>
+                <th class="p-3 text-left">Status</th>
+                <th class="p-3 text-left">Payslip</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for salary in salaries %}
+            <tr class="border-t">
+                <td class="p-3">{{ salary.month }}</td>
+                <td class="p-3">₹{{ salary.basic }}</td>
+                <td class="p-3">₹{{ salary.deductions }}</td>
+                <td class="p-3 font-semibold">
+                    ₹{{ salary.net_salary }}
+                </td>
+                <td class="p-3">
+                    {% if salary.is_credited %}
+                        <span class="text-green-600 font-semibold">
+                            Credited
+                        </span>
+                    {% else %}
+                        <span class="text-yellow-600 font-semibold">
+                            Pending
+                        </span>
+                    {% endif %}
+                </td>
+                <td class="p-3">
+                    {% if salary.payslip %}
+                        <a href="{{ salary.payslip.url }}"
+                           target="_blank"
+                           class="text-blue-500 underline">
+                            Download
+                        </a>
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="p-5 text-center text-gray-500">
+                    No salary records found
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

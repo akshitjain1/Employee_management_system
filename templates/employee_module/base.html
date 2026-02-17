@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Employee Management System{% endblock %}</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js for graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Custom Styles -->
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #dee3ed;
+        }
+        .sidebar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .nav-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .nav-item.active {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="bg-gray-100">
+    
+    <div class="flex min-h-screen">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar w-64 text-white p-6 shadow-lg">
+            <div class="mb-8">
+                <h1 class="text-2xl font-bold">EMS</h1>
+                <p class="text-sm opacity-75">Employee Portal</p>
+            </div>
+            
+            <nav>
+                <ul class="space-y-2">
+                    <li>
+                        <a href="{% url 'employee_dashboard' %}" class="nav-item block px-4 py-3 rounded hover:bg-white/10 transition">
+                            <span class="text-lg">📊</span> Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'employee_tasks' %}" class="nav-item block px-4 py-3 rounded hover:bg-white/10 transition">
+                            <span class="text-lg">✓</span> Tasks
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'employee_attendance' %}" class="nav-item block px-4 py-3 rounded hover:bg-white/10 transition">
+                            <span class="text-lg">📅</span> Attendance
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'employee_leave' %}" class="nav-item block px-4 py-3 rounded hover:bg-white/10 transition">
+                            <span class="text-lg">🏖️</span> Leave
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'employee_salary' %}" class="nav-item block px-4 py-3 rounded hover:bg-white/10 transition">
+                            <span class="text-lg">💰</span> Salary
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="mt-auto pt-8">
+                <a href="{% url 'employee_logout' %}" class="block w-full px-4 py-2 bg-red-500 hover:bg-red-600 rounded transition text-center">
+                    Logout
+                </a>
+            </div>
+        </aside>
+        
+        <!-- Main Content Area -->
+        <main class="flex-1 p-8">
+            
+            <!-- Messages -->
+            {% if messages %}
+            <div class="mb-6">
+                {% for message in messages %}
+                <div class="p-4 mb-3 rounded {% if message.tags == 'error' %}bg-red-100 border-l-4 border-red-500 text-red-700{% elif message.tags == 'success' %}bg-green-100 border-l-4 border-green-500 text-green-700{% elif message.tags == 'warning' %}bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700{% else %}bg-blue-100 border-l-4 border-blue-500 text-blue-700{% endif %}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <!-- Page Content -->
+            {% block content %}
+            {% endblock %}
+            
+        </main>
+        
+    </div>
+    
+    <!-- Extra JavaScript -->
+    {% block extra_js %}{% endblock %}
+    
+</body>
+</html>
