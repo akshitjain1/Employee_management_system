@@ -1,0 +1,22 @@
+# Core Django Framework
+Django==5.1.7
+
+# Environment Management
+python-decouple==3.8
+python-dotenv==1.0.0
+
+# Image Processing
+Pillow==10.3.0
+
+# PDF Generation
+reportlab==4.2.0
+
+# Database Adapter (for future PostgreSQL migration)
+psycopg2-binary==2.9.9
+
+# Django Extensions (debugging & development)
+django-extensions==3.2.3
+
+# Optional: Django REST Framework (for future API)
+# djangorestframework==3.14.0
+
