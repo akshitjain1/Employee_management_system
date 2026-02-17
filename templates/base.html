@@ -35,6 +35,15 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'hr_dashboard' %}">Dashboard</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'attendance_list' %}">Attendance</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'leave_requests' %}">Leave Requests</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'task_list' %}">Tasks</a>
+                    </li>
                     {% elif user.role == 'Employee' %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'employee_dashboard' %}">Dashboard</a>

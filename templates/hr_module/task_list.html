@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block title %}Tasks - EMS{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+    <div class="col-md-6">
+        <h2><i class="bi bi-list-task"></i> Task Management</h2>
+    </div>
+    <div class="col-md-6 text-end">
+        <a href="{% url 'create_task' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Create New Task
+        </a>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="GET" class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label">Status</label>
+                <select name="status" class="form-select">
+                    <option value="">All</option>
+                    <option value="Pending" {% if status_filter == 'Pending' %}selected{% endif %}>Pending</option>
+                    <option value="In Progress" {% if status_filter == 'In Progress' %}selected{% endif %}>In Progress</option>
+                    <option value="Completed" {% if status_filter == 'Completed' %}selected{% endif %}>Completed</option>
+                    <option value="On Hold" {% if status_filter == 'On Hold' %}selected{% endif %}>On Hold</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Priority</label>
+                <select name="priority" class="form-select">
+                    <option value="">All</option>
+                    <option value="Low" {% if priority_filter == 'Low' %}selected{% endif %}>Low</option>
+                    <option value="Medium" {% if priority_filter == 'Medium' %}selected{% endif %}>Medium</option>
+                    <option value="High" {% if priority_filter == 'High' %}selected{% endif %}>High</option>
+                    <option value="Urgent" {% if priority_filter == 'Urgent' %}selected{% endif %}>Urgent</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Search</label>
+                <input type="text" name="search" class="form-control" placeholder="Search tasks" value="{{ search }}">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">&nbsp;</label>
+                <button type="submit" class="btn btn-primary w-100">Filter</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Tasks table -->
+<div class="card">
+    <div class="card-body">
+        {% if tasks %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Task</th>
+                        <th>Assigned To</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                        <th>Due Date</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for task in tasks %}
+                    <tr {% if task.is_overdue %}class="table-danger"{% endif %}>
+                        <td>
+                            <strong>{{ task.title }}</strong>
+                            {% if task.is_overdue %}
+                            <br><small class="text-danger"><i class="bi bi-exclamation-triangle"></i> Overdue</small>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {{ task.assigned_to.first_name }} {{ task.assigned_to.last_name }}<br>
+                            <small class="text-muted">{{ task.assigned_to.email }}</small>
+                        </td>
+                        <td>
+                            {% if task.priority == 'Urgent' %}
+                            <span class="badge bg-danger">{{ task.priority }}</span>
+                            {% elif task.priority == 'High' %}
+                            <span class="badge bg-warning">{{ task.priority }}</span>
+                            {% elif task.priority == 'Medium' %}
+                            <span class="badge bg-info">{{ task.priority }}</span>
+                            {% else %}
+                            <span class="badge bg-secondary">{{ task.priority }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if task.status == 'Completed' %}
+                            <span class="badge bg-success">{{ task.status }}</span>
+                            {% elif task.status == 'In Progress' %}
+                            <span class="badge bg-primary">{{ task.status }}</span>
+                            {% elif task.status == 'On Hold' %}
+                            <span class="badge bg-warning">{{ task.status }}</span>
+                            {% else %}
+                            <span class="badge bg-secondary">{{ task.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ task.due_date }}</td>
+                        <td>{{ task.created_at|date:"M d, Y" }}</td>
+                        <td>
+                            <a href="{% url 'task_detail' task.id %}" class="btn btn-sm btn-primary">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a href="{% url 'delete_task' task.id %}" class="btn btn-sm btn-danger">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-muted text-center">No tasks found.</p>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block title %}Leave Requests - EMS{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+    <div class="col-md-6">
+        <h2><i class="bi bi-calendar-x"></i> Leave Requests</h2>
+    </div>
+    <div class="col-md-6 text-end">
+        <a href="{% url 'apply_leave' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Apply Leave
+        </a>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="GET" class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label">Status</label>
+                <select name="status" class="form-select">
+                    <option value="">All</option>
+                    <option value="Pending" {% if status_filter == 'Pending' %}selected{% endif %}>Pending</option>
+                    <option value="Approved" {% if status_filter == 'Approved' %}selected{% endif %}>Approved</option>
+                    <option value="Rejected" {% if status_filter == 'Rejected' %}selected{% endif %}>Rejected</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Search</label>
+                <input type="text" name="search" class="form-control" placeholder="Search by name or email" value="{{ search }}">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">&nbsp;</label>
+                <button type="submit" class="btn btn-primary w-100">Filter</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Leave requests table -->
+<div class="card">
+    <div class="card-body">
+        {% if leaves %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Employee</th>
+                        <th>Leave Type</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Duration</th>
+                        <th>Status</th>
+                        <th>Applied On</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for leave in leaves %}
+                    <tr>
+                        <td>
+                            <strong>{{ leave.user.first_name }} {{ leave.user.last_name }}</strong><br>
+                            <small class="text-muted">{{ leave.user.email }}</small>
+                        </td>
+                        <td>{{ leave.leave_type }}</td>
+                        <td>{{ leave.start_date }}</td>
+                        <td>{{ leave.end_date }}</td>
+                        <td>{{ leave.get_duration }} day{% if leave.get_duration > 1 %}s{% endif %}</td>
+                        <td>
+                            {% if leave.status == 'Pending' %}
+                            <span class="badge bg-warning">{{ leave.status }}</span>
+                            {% elif leave.status == 'Approved' %}
+                            <span class="badge bg-success">{{ leave.status }}</span>
+                            {% elif leave.status == 'Rejected' %}
+                            <span class="badge bg-danger">{{ leave.status }}</span>
+                            {% else %}
+                            <span class="badge bg-secondary">{{ leave.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ leave.applied_at|date:"M d, Y" }}</td>
+                        <td>
+                            <a href="{% url 'leave_detail' leave.id %}" class="btn btn-sm btn-primary">
+                                <i class="bi bi-eye"></i> View
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-muted text-center">No leave requests found.</p>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
