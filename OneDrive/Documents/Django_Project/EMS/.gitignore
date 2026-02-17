@@ -1,0 +1,29 @@
+# Ignore parent directories
+../*
+../../*
+../../../*
+../../../../*
+
+# Allow only Employee_management_system
+!Employee_management_system/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+*.egg-info/
+dist/
+
+# Django
+*.log
+db.sqlite3
+media/
+staticfiles/
+
+# IDE
+.vscode/
+.idea/

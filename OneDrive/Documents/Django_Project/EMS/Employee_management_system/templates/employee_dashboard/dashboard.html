@@ -1,0 +1,122 @@
+{% extends "employee_dashboard/base.html" %}
+
+{% block title %}Employee Dashboard{% endblock %}
+
+{% block content %}
+
+<!-- ===== PAGE HEADER ===== -->
+<div class="mb-6">
+    <h2 class="text-2xl font-semibold">
+        Welcome, {% if profile.user.first_name %}{{ profile.user.first_name }}{% else %}{{ profile.user.username }}{% endif %}
+    </h2>
+    <p class="text-gray-500">
+        Employee ID: {{ profile.employee_id }} | Department: {{ profile.department }}
+    </p>
+</div>
+
+<!-- ===== SUMMARY CARDS ===== -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+
+    <!-- Attendance -->
+    <div class="bg-white p-5 rounded shadow">
+        <h3 class="text-gray-500">Today's Attendance</h3>
+        <p class="text-xl font-bold mt-2">
+            {{ attendance_today.status|default:"Not Marked" }}
+        </p>
+    </div>
+
+    <!-- Active Tasks -->
+    <div class="bg-white p-5 rounded shadow">
+        <h3 class="text-gray-500">Active Tasks</h3>
+        <p class="text-xl font-bold mt-2">{{ active_tasks }}</p>
+    </div>
+
+    <!-- Overdue Tasks -->
+    <div class="bg-white p-5 rounded shadow">
+        <h3 class="text-gray-500">Overdue Tasks</h3>
+        <p class="text-xl font-bold mt-2 text-red-500">
+            {{ overdue_tasks }}
+        </p>
+    </div>
+
+    <!-- Salary -->
+    <div class="bg-white p-5 rounded shadow">
+        <h3 class="text-gray-500">Latest Salary</h3>
+        <p class="text-xl font-bold mt-2">
+            {% if latest_salary %}
+                ₹{{ latest_salary.net_salary }}
+            {% else %}
+                Pending
+            {% endif %}
+        </p>
+    </div>
+
+</div>
+
+<!-- ===== CHARTS SECTION ===== -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+
+    <!-- Attendance Chart -->
+    <div class="bg-white p-5 rounded shadow">
+        <h3 class="font-semibold mb-4">Attendance Overview</h3>
+        <canvas id="attendanceChart"></canvas>
+    </div>
+
+    <!-- Task Summary -->
+    <div class="bg-white p-5 rounded shadow">
+        <h1 class="font-semibold mb-4">Task Summary</h1>
+        <p>Total Tasks: <strong>{{ total_tasks }}</strong></p>
+        <p>Active Tasks: <strong>{{ active_tasks }}</strong></p>
+        <p>Overdue Tasks:
+            <strong class="text-red-500">{{ overdue_tasks }}</strong>
+        </p>
+    </div>
+
+</div>
+
+<!-- ===== RECENT LEAVES ===== -->
+<div class="bg-white p-5 rounded shadow mb-8">
+    <h3 class="font-semibold mb-4">Recent Leave Requests</h3>
+
+    <table class="w-full text-left border">
+        <thead class="bg-gray-200">
+            <tr>
+                <th class="p-2">From</th>
+                <th class="p-2">To</th>
+                <th class="p-2">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for leave in recent_leaves %}
+            <tr class="border-t">
+                <td class="p-2">{{ leave.start_date }}</td>
+                <td class="p-2">{{ leave.end_date }}</td>
+                <td class="p-2">{{ leave.status }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3" class="p-3 text-center text-gray-500">
+                    No leave records found
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const ctx = document.getElementById('attendanceChart');
+    new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: ['Present', 'Absent'],
+            datasets: [{
+                data: [{{ present_days }}, {{ absent_days }}]
+            }]
+        }
+    });
+</script>
+{% endblock %}
