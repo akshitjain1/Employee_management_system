@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+
+{% block title %}Leave Detail - EMS{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+    <div class="col-12">
+        <h2><i class="bi bi-calendar-event"></i> Leave Request Details</h2>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Leave Information</h5>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <tr>
+                        <th width="30%">Employee:</th>
+                        <td>{{ leave.user.first_name }} {{ leave.user.last_name }} ({{ leave.user.email }})</td>
+                    </tr>
+                    <tr>
+                        <th>Department:</th>
+                        <td>{{ leave.user.department|default:"N/A" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Leave Type:</th>
+                        <td><span class="badge bg-info">{{ leave.leave_type }}</span></td>
+                    </tr>
+                    <tr>
+                        <th>Start Date:</th>
+                        <td>{{ leave.start_date }}</td>
+                    </tr>
+                    <tr>
+                        <th>End Date:</th>
+                        <td>{{ leave.end_date }}</td>
+                    </tr>
+                    <tr>
+                        <th>Duration:</th>
+                        <td>{{ leave.get_duration }} day{% if leave.get_duration > 1 %}s{% endif %}</td>
+                    </tr>
+                    <tr>
+                        <th>Reason:</th>
+                        <td>{{ leave.reason }}</td>
+                    </tr>
+                    <tr>
+                        <th>Status:</th>
+                        <td>
+                            {% if leave.status == 'Pending' %}
+                            <span class="badge bg-warning">{{ leave.status }}</span>
+                            {% elif leave.status == 'Approved' %}
+                            <span class="badge bg-success">{{ leave.status }}</span>
+                            {% elif leave.status == 'Rejected' %}
+                            <span class="badge bg-danger">{{ leave.status }}</span>
+                            {% else %}
+                            <span class="badge bg-secondary">{{ leave.status }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Applied On:</th>
+                        <td>{{ leave.applied_at|date:"M d, Y H:i" }}</td>
+                    </tr>
+                    {% if leave.approved_by %}
+                    <tr>
+                        <th>Approved/Rejected By:</th>
+                        <td>{{ leave.approved_by.first_name }} {{ leave.approved_by.last_name }}</td>
+                    </tr>
+                    {% endif %}
+                    {% if leave.remarks %}
+                    <tr>
+                        <th>Remarks:</th>
+                        <td>{{ leave.remarks }}</td>
+                    </tr>
+                    {% endif %}
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        {% if leave.status == 'Pending' %}
+        <div class="card">
+            <div class="card-header bg-warning text-white">
+                <h5 class="mb-0">Approve/Reject Leave</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Decision</label>
+                        {{ form.status }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Remarks (Optional)</label>
+                        {{ form.remarks }}
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">Submit Decision</button>
+                        <a href="{% url 'leave_requests' %}" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+        {% else %}
+        <div class="card">
+            <div class="card-body text-center">
+                <p class="text-muted">This leave request has already been {{ leave.status|lower }}.</p>
+                <a href="{% url 'leave_requests' %}" class="btn btn-secondary">Back to Leave Requests</a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% block title %}Employee Attendance Report - EMS{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+    <div class="col-12">
+        <h2><i class="bi bi-file-bar-graph"></i> Employee Attendance Report</h2>
+    </div>
+</div>
+
+<div class="card mb-3">
+    <div class="card-header">
+        <h5 class="mb-0">{{ employee.first_name }} {{ employee.last_name }} - Attendance Report</h5>
+    </div>
+    <div class="card-body">
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <p><strong>Email:</strong> {{ employee.email }}</p>
+                <p><strong>Department:</strong> {{ employee.department|default:"N/A" }}</p>
+                <p><strong>Employee ID:</strong> {{ employee.employee_id }}</p>
+            </div>
+            <div class="col-md-6">
+                <form method="GET" class="row g-2">
+                    <div class="col-md-5">
+                        <label class="form-label">Start Date</label>
+                        <input type="date" name="start_date" class="form-control" value="{{ start_date }}">
+                    </div>
+                    <div class="col-md-5">
+                        <label class="form-label">End Date</label>
+                        <input type="date" name="end_date" class="form-control" value="{{ end_date }}">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">&nbsp;</label>
+                        <button type="submit" class="btn btn-primary w-100">Filter</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-2">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h3>{{ total_days }}</h3>
+                        <small>Total Days</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="card text-center bg-success text-white">
+                    <div class="card-body">
+                        <h3>{{ present_days }}</h3>
+                        <small>Present</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="card text-center bg-danger text-white">
+                    <div class="card-body">
+                        <h3>{{ absent_days }}</h3>
+                        <small>Absent</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="card text-center bg-warning">
+                    <div class="card-body">
+                        <h3>{{ leave_days }}</h3>
+                        <small>On Leave</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="card text-center bg-info text-white">
+                    <div class="card-body">
+                        <h3>{{ half_days }}</h3>
+                        <small>Half Days</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="card text-center bg-primary text-white">
+                    <div class="card-body">
+                        <h3>{{ attendance_percentage }}%</h3>
+                        <small>Attendance</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Attendance Details Table -->
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Check In</th>
+                        <th>Check Out</th>
+                        <th>Working Hours</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for att in attendances %}
+                    <tr>
+                        <td>{{ att.date }}</td>
+                        <td>
+                            {% if att.status == 'Present' %}
+                            <span class="badge bg-success">{{ att.status }}</span>
+                            {% elif att.status == 'Absent' %}
+                            <span class="badge bg-danger">{{ att.status }}</span>
+                            {% elif att.status == 'On Leave' %}
+                            <span class="badge bg-warning">{{ att.status }}</span>
+                            {% elif att.status == 'Half Day' %}
+                            <span class="badge bg-info">{{ att.status }}</span>
+                            {% else %}
+                            <span class="badge bg-secondary">{{ att.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ att.check_in_time|default:"N/A" }}</td>
+                        <td>{{ att.check_out_time|default:"N/A" }}</td>
+                        <td>{{ att.get_working_hours }} hrs</td>
+                        <td>{{ att.notes|default:"" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-3">
+            <a href="{% url 'attendance_list' %}" class="btn btn-secondary">Back to Attendance List</a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

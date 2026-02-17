@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Task - EMS{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+    <div class="col-12">
+        <h2><i class="bi bi-plus-circle"></i> Create New Task</h2>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Task Details</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Assign To</label>
+                        {{ form.assigned_to }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Task Title</label>
+                        {{ form.title }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        {{ form.description }}
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Priority</label>
+                            {{ form.priority }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Due Date</label>
+                            {{ form.due_date }}
+                        </div>
+                    </div>
+
+                    {% if form.errors %}
+                    <div class="alert alert-danger">
+                        <ul class="mb-0">
+                            {% for field, errors in form.errors.items %}
+                                {% for error in errors %}
+                                <li>{{ error }}</li>
+                                {% endfor %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'task_list' %}" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Create Task</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -14,6 +14,15 @@ Django-based Employee Management System for managing employees, HR staff, and ad
 - Audit logs to track admin actions
 - Account locking/unlocking and password reset
 
+### HR Module
+- Dashboard with statistics (attendance, leave, tasks)
+- Attendance Management - mark individual/bulk attendance, view attendance records
+- Leave Management - approve/reject leave requests, view leave history
+- Task Management - assign tasks to employees, track progress and deadlines
+- Employee attendance reports with filtering
+- Export attendance data to CSV
+- Real-time statistics and charts
+
 ### Authentication 
 - Username and password login
 - New employees get temporary passwords via email
@@ -23,8 +32,7 @@ Django-based Employee Management System for managing employees, HR staff, and ad
 - Different roles: Admin, HR, Employee
 
 ### TODO
-- HR Module - for attendance and leave management
-- Employee Module - for employees to view their info and apply leave
+- Employee Module - for employees to view their info, apply leave, and view assigned tasks
 
 ## Requirements
 
@@ -114,7 +122,7 @@ python manage.py runserver
 - Bulk actions on multiple employees
 - Export all data to CSV
 
-### Dashboard
+### Admin Dashboard
 Shows statistics like:
 - Total employees
 - Active/inactive counts
@@ -122,6 +130,14 @@ Shows statistics like:
 - Salary expenditure
 - Department wise distribution (chart)
 - Recent employees list
+
+### HR Dashboard
+Shows statistics like:
+- Total employees and attendance today (present/absent/on leave)
+- Pending leave requests
+- Task statistics (pending, overdue)
+- Department wise employee distribution (chart)
+- Recent leave requests and tasks
 
 ## Tech Stack
 
@@ -159,9 +175,9 @@ Shows statistics like:
 
 ```
 ems/
-├── admin_panel/          # Admin features (done)
-├── hr_module/            # HR features (not done yet)
-├── employee_module/      # Employee features (not done yet)
+├── admin_panel/          # Admin features (completed)
+├── hr_module/            # HR features (completed)
+├── employee_module/      # Employee features (not implemented)
 ├── users/                # User model and authentication
 ├── templates/            # HTML files
 ├── static/               # CSS, JS files
@@ -176,10 +192,13 @@ ems/
 - View all data and reports
 - Manage accounts and permissions
 
-**HR** (coming soon)
-- Manage attendance
-- Approve leave requests
-- Assign tasks
+**HR**
+- Manage attendance (mark individual/bulk, view records)
+- Approve/reject leave requests
+- Assign and track tasks
+- View employee attendance reports
+- Export attendance data
+- Dashboard with real-time statistics
 
 **Employee** (coming soon)
 - View personal info
@@ -200,7 +219,10 @@ ems/
 | Login tracking | Done |
 | Audit logs | Done |
 | OTP verification | Done |
-| HR Module | Not started |
+| Attendance Management | Done |
+| Leave Management | Done |
+| Task Management | Done |
+| HR Dashboard | Done |
 | Employee Module | Not started |
 
 ## Testing
@@ -241,7 +263,8 @@ DEFAULT_FROM_EMAIL=EMS <your-email@gmail.com>
 
 - This is a college project for learning Django
 - Admin panel is fully functional
-- HR and Employee modules are planned but not implemented yet
+- HR module is fully functional with attendance, leave, and task management
+- Employee module is planned but not implemented yet
 - Email functionality requires Gmail account with app password
 
 ---

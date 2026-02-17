@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block title %}Task Detail - EMS{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+    <div class="col-12">
+        <h2><i class="bi bi-list-task"></i> Task Details</h2>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">{{ task.title }}</h5>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <tr>
+                        <th width="30%">Assigned To:</th>
+                        <td>{{ task.assigned_to.first_name }} {{ task.assigned_to.last_name }} ({{ task.assigned_to.email }})</td>
+                    </tr>
+                    <tr>
+                        <th>Department:</th>
+                        <td>{{ task.assigned_to.department|default:"N/A" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Assigned By:</th>
+                        <td>{{ task.assigned_by.first_name }} {{ task.assigned_by.last_name }}</td>
+                    </tr>
+                    <tr>
+                        <th>Priority:</th>
+                        <td>
+                            {% if task.priority == 'Urgent' %}
+                            <span class="badge bg-danger">{{ task.priority }}</span>
+                            {% elif task.priority == 'High' %}
+                            <span class="badge bg-warning">{{ task.priority }}</span>
+                            {% elif task.priority == 'Medium' %}
+                            <span class="badge bg-info">{{ task.priority }}</span>
+                            {% else %}
+                            <span class="badge bg-secondary">{{ task.priority }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Status:</th>
+                        <td>
+                            {% if task.status == 'Completed' %}
+                            <span class="badge bg-success">{{ task.status }}</span>
+                            {% elif task.status == 'In Progress' %}
+                            <span class="badge bg-primary">{{ task.status }}</span>
+                            {% elif task.status == 'On Hold' %}
+                            <span class="badge bg-warning">{{ task.status }}</span>
+                            {% else %}
+                            <span class="badge bg-secondary">{{ task.status }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Due Date:</th>
+                        <td>
+                            {{ task.due_date }}
+                            {% if task.is_overdue %}
+                            <span class="badge bg-danger ms-2">Overdue</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Created On:</th>
+                        <td>{{ task.created_at|date:"M d, Y H:i" }}</td>
+                    </tr>
+                    {% if task.completed_at %}
+                    <tr>
+                        <th>Completed On:</th>
+                        <td>{{ task.completed_at|date:"M d, Y H:i" }}</td>
+                    </tr>
+                    {% endif %}
+                    <tr>
+                        <th>Description:</th>
+                        <td>{{ task.description|linebreaks }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Update Status</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Change Status</label>
+                        {{ form.status }}
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">Update Status</button>
+                        <a href="{% url 'task_list' %}" class="btn btn-secondary">Back to Tasks</a>
+                        <a href="{% url 'delete_task' task.id %}" class="btn btn-danger">
+                            <i class="bi bi-trash"></i> Delete Task
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
