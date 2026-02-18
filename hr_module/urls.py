@@ -4,7 +4,7 @@ from . import views
 urlpatterns = [
     path('dashboard/', views.hr_dashboard, name='hr_dashboard'),
     
-    # Attendance
+    # Attendance URLs
     path('attendance/', views.attendance_list, name='attendance_list'),
     path('attendance/mark/', views.mark_attendance, name='mark_attendance'),
     path('attendance/bulk/', views.bulk_mark_attendance, name='bulk_mark_attendance'),

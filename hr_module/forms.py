@@ -5,7 +5,7 @@ from datetime import date
 
 User = get_user_model()
 
-# Attendance form
+# Attendance form for marking attendance and editing existing records
 class AttendanceForm(forms.ModelForm):
     class Meta:
         model = Attendance
