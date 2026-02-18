@@ -24,7 +24,7 @@ def parse_date(date_string):
     if isinstance(date_string, date):
         return date_string.strftime('%Y-%m-%d')
     
-    # Try to parse the date
+    # Try to parse the date string in multiple formats
     try:
         # Try YYYY-MM-DD format first
         parsed = datetime.strptime(str(date_string), '%Y-%m-%d').date()
