@@ -15,7 +15,7 @@ from admin_panel.models import AuditLog
 
 User = get_user_model()
 
-# Helper function to parse date from string
+# Helper function to parse date from string in various formats
 def parse_date(date_string):
     """Parse date from string in various formats, return YYYY-MM-DD string"""
     if not date_string:

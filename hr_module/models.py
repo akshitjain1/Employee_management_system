@@ -3,7 +3,7 @@ from django.conf import settings
 from django.utils import timezone
 from datetime import datetime, time
 
-# Attendance model
+# Attendance model to track daily attendance of employees
 class Attendance(models.Model):
     STATUS_CHOICES = (
         ('Present', 'Present'),
