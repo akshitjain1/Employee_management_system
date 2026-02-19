@@ -1,116 +1,128 @@
-{% extends "employee_dashboard/base.html" %}
-{% block title %}My Leave{% endblock %}
+{% extends "employee_module/base.html" %}
+{% block title %}Leave Management{% endblock %}
 
 {% block content %}
-
-<!-- ===== PAGE HEADER ===== -->
-<div class="mb-6">
-    <h2 class="text-2xl font-semibold">Leave Management</h2>
-    <p class="text-gray-500">
-        Apply for leave and track approval status
-    </p>
+<!-- Page Header -->
+<div class="page-header mb-4">
+    <h2><i class="bi bi-calendar-x"></i> Leave Management</h2>
 </div>
 
-<!-- ===== APPLY LEAVE FORM ===== -->
-<div class="bg-white p-6 rounded shadow mb-8">
-    <h3 class="text-lg font-semibold mb-4">Apply for Leave</h3>
-
-    <form method="post" enctype="multipart/form-data"
-          action="{% url 'apply_leave' %}">
-        {% csrf_token %}
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-
-            <!-- From Date -->
-            <div>
-                <label class="block text-sm text-gray-600">From Date</label>
-                <input type="date" name="start_date" required
-                       class="w-full border rounded px-3 py-2">
+<!-- Leave Balance Card -->
+<div class="card mb-4">
+    <div class="card-header">
+        <i class="bi bi-wallet2"></i> Leave Balance ({{ leave_balance.year }})
+    </div>
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <div class="text-muted small">Sick Leave</div>
+                <div class="h2 mb-0 text-info">{{ leave_balance.sick_leave }}</div>
             </div>
-
-            <!-- To Date -->
-            <div>
-                <label class="block text-sm text-gray-600">To Date</label>
-                <input type="date" name="end_date" required
-                       class="w-full border rounded px-3 py-2">
+            <div class="col-md-4">
+                <div class="text-muted small">Casual Leave</div>
+                <div class="h2 mb-0 text-success">{{ leave_balance.casual_leave }}</div>
             </div>
-
-            <!-- Document -->
-            <div>
-                <label class="block text-sm text-gray-600">
-                    Supporting Document (optional)
-                </label>
-                <input type="file" name="document"
-                       class="w-full border rounded px-3 py-2">
+            <div class="col-md-4">
+                <div class="text-muted small">Earned Leave</div>
+                <div class="h2 mb-0 text-primary">{{ leave_balance.earned_leave }}</div>
             </div>
-
         </div>
+    </div>
+</div>
 
-        <!-- Reason -->
-        <div class="mt-4">
-            <label class="block text-sm text-gray-600">Reason</label>
-            <textarea name="reason" rows="3" required
-                      class="w-full border rounded px-3 py-2"
-                      placeholder="Enter reason for leave"></textarea>
+<!-- Apply Leave Form -->
+<div class="card mb-4">
+    <div class="card-header">
+        <i class="bi bi-plus-circle"></i> Apply for Leave
+    </div>
+    <div class="card-body">
+        <form method="post" action="{% url 'employee:apply_leave' %}">
+            {% csrf_token %}
+            <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">Leave Type</label>
+                    <select name="leave_type" required class="form-select">
+                        <option value="">Select Type</option>
+                        <option value="Sick Leave">Sick Leave</option>
+                        <option value="Casual Leave">Casual Leave</option>
+                        <option value="Earned Leave">Earned Leave</option>
+                        <option value="Maternity Leave">Maternity Leave</option>
+                        <option value="Paternity Leave">Paternity Leave</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">Start Date</label>
+                    <input type="date" name="start_date" required class="form-control">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">End Date</label>
+                    <input type="date" name="end_date" required class="form-control">
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Reason</label>
+                <textarea name="reason" required rows="3" class="form-control" placeholder="Enter reason for leave"></textarea>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-send"></i> Submit Leave Request
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Leave History -->
+<div class="card">
+    <div class="card-header">
+        <i class="bi bi-clock-history"></i> Leave History
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Leave Type</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Days</th>
+                        <th>Reason</th>
+                        <th>Status</th>
+                        <th>Applied On</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for leave in leaves %}
+                    <tr>
+                        <td>{{ leave.leave_type }}</td>
+                        <td>{{ leave.start_date }}</td>
+                        <td>{{ leave.end_date }}</td>
+                        <td>{{ leave.get_duration }}</td>
+                        <td>{{ leave.reason|truncatewords:10 }}</td>
+                        <td>
+                            {% if leave.status == 'Approved' %}
+                            <span class="badge bg-success">{{ leave.status }}</span>
+                            {% elif leave.status == 'Rejected' %}
+                            <span class="badge bg-danger">{{ leave.status }}</span>
+                            {% else %}
+                            <span class="badge bg-warning">{{ leave.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ leave.applied_at|date:"d M Y" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center text-muted">
+                            No leave applications yet
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
-
-        <button class="mt-4 bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600">
-            Apply Leave
-        </button>
-    </form>
+    </div>
 </div>
-
-<!-- ===== LEAVE HISTORY ===== -->
-<div class="bg-white p-6 rounded shadow">
-    <h3 class="text-lg font-semibold mb-4">Leave History</h3>
-
-    <table class="w-full border-collapse">
-        <thead class="bg-gray-200">
-            <tr>
-                <th class="p-3 text-left">From</th>
-                <th class="p-3 text-left">To</th>
-                <th class="p-3 text-left">Reason</th>
-                <th class="p-3 text-left">Status</th>
-                <th class="p-3 text-left">Document</th>
-            </tr>
-        </thead>
-
-        <tbody>
-            {% for leave in leaves %}
-            <tr class="border-t">
-                <td class="p-3">{{ leave.start_date }}</td>
-                <td class="p-3">{{ leave.end_date }}</td>
-                <td class="p-3">{{ leave.reason|truncatechars:40 }}</td>
-                <td class="p-3 font-semibold">
-                    {% if leave.status == "Approved" %}
-                        <span class="text-green-600">Approved</span>
-                    {% elif leave.status == "Rejected" %}
-                        <span class="text-red-600">Rejected</span>
-                    {% else %}
-                        <span class="text-yellow-600">Pending</span>
-                    {% endif %}
-                </td>
-                <td class="p-3">
-                    {% if leave.document %}
-                        <a href="{{ leave.document.url }}"
-                           target="_blank"
-                           class="text-blue-500 underline">
-                            View
-                        </a>
-                    {% else %}
-                        -
-                    {% endif %}
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="5" class="p-5 text-center text-gray-500">
-                    No leave applications found
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
-
 {% endblock %}

@@ -1,107 +1,151 @@
-{% extends "employee_dashboard/base.html" %}
+{% extends "employee_module/base.html" %}
 
 {% block title %}Employee Dashboard{% endblock %}
 
 {% block content %}
 
-<!-- ===== PAGE HEADER ===== -->
-<div class="mb-6">
-    <h2 class="text-2xl font-semibold">
-        Welcome, {% if profile.user.first_name %}{{ profile.user.first_name }}{% else %}{{ profile.user.username }}{% endif %}
-    </h2>
-    <p class="text-gray-500">
-        Employee ID: {{ profile.employee_id }} | Department: {{ profile.department }}
+<!-- Page Header -->
+<div class="page-header mb-4">
+    <h2><i class="bi bi-speedometer2"></i> Welcome, {% if user.first_name %}{{ user.first_name }}{% else %}{{ user.username }}{% endif %}</h2>
+    <p class="text-muted mb-0">
+        Employee ID: {{ user.employee_id|default:"N/A" }} | Department: {{ user.department|default:"N/A" }}
     </p>
 </div>
 
-<!-- ===== SUMMARY CARDS ===== -->
-<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-
-    <!-- Attendance -->
-    <div class="bg-white p-5 rounded shadow">
-        <h3 class="text-gray-500">Today's Attendance</h3>
-        <p class="text-xl font-bold mt-2">
-            {{ attendance_today.status|default:"Not Marked" }}
-        </p>
+<!-- Summary Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card stat-card info">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-label">Today's Attendance</div>
+                        <div class="stat-value">{{ attendance_today.status|default:"Not Marked" }}</div>
+                    </div>
+                    <i class="bi bi-calendar-check stat-icon"></i>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <!-- Active Tasks -->
-    <div class="bg-white p-5 rounded shadow">
-        <h3 class="text-gray-500">Active Tasks</h3>
-        <p class="text-xl font-bold mt-2">{{ active_tasks }}</p>
+    
+    <div class="col-md-3">
+        <div class="card stat-card warning">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-label">Pending Tasks</div>
+                        <div class="stat-value">{{ pending_tasks }}</div>
+                    </div>
+                    <i class="bi bi-hourglass-split stat-icon"></i>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <!-- Overdue Tasks -->
-    <div class="bg-white p-5 rounded shadow">
-        <h3 class="text-gray-500">Overdue Tasks</h3>
-        <p class="text-xl font-bold mt-2 text-red-500">
-            {{ overdue_tasks }}
-        </p>
+    
+    <div class="col-md-3">
+        <div class="card stat-card success">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-label">Completed Tasks</div>
+                        <div class="stat-value text-success">{{ completed_tasks }}</div>
+                    </div>
+                    <i class="bi bi-check-circle stat-icon"></i>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <!-- Salary -->
-    <div class="bg-white p-5 rounded shadow">
-        <h3 class="text-gray-500">Latest Salary</h3>
-        <p class="text-xl font-bold mt-2">
-            {% if latest_salary %}
-                ₹{{ latest_salary.net_salary }}
-            {% else %}
-                Pending
-            {% endif %}
-        </p>
+    
+    <div class="col-md-3">
+        <div class="card stat-card danger">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-label">Overdue Tasks</div>
+                        <div class="stat-value text-danger">{{ overdue_tasks }}</div>
+                    </div>
+                    <i class="bi bi-exclamation-triangle stat-icon"></i>
+                </div>
+            </div>
+        </div>
     </div>
-
 </div>
 
-<!-- ===== CHARTS SECTION ===== -->
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-
-    <!-- Attendance Chart -->
-    <div class="bg-white p-5 rounded shadow">
-        <h3 class="font-semibold mb-4">Attendance Overview</h3>
-        <canvas id="attendanceChart"></canvas>
+<!-- Charts Section -->
+<div class="row g-3 mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-pie-chart"></i> Attendance Overview
+            </div>
+            <div class="card-body">
+                <canvas id="attendanceChart"></canvas>
+            </div>
+        </div>
     </div>
-
-    <!-- Task Summary -->
-    <div class="bg-white p-5 rounded shadow">
-        <h1 class="font-semibold mb-4">Task Summary</h1>
-        <p>Total Tasks: <strong>{{ total_tasks }}</strong></p>
-        <p>Active Tasks: <strong>{{ active_tasks }}</strong></p>
-        <p>Overdue Tasks:
-            <strong class="text-red-500">{{ overdue_tasks }}</strong>
-        </p>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-list-task"></i> Task Summary
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <span class="text-muted">Total Tasks:</span>
+                    <strong class="float-end">{{ total_tasks }}</strong>
+                </div>
+                <div class="mb-3">
+                    <span class="text-muted">Active Tasks:</span>
+                    <strong class="float-end">{{ active_tasks }}</strong>
+                </div>
+                <div class="mb-3">
+                    <span class="text-muted">Overdue Tasks:</span>
+                    <strong class="float-end text-danger">{{ overdue_tasks }}</strong>
+                </div>
+            </div>
+        </div>
     </div>
-
 </div>
 
-<!-- ===== RECENT LEAVES ===== -->
-<div class="bg-white p-5 rounded shadow mb-8">
-    <h3 class="font-semibold mb-4">Recent Leave Requests</h3>
-
-    <table class="w-full text-left border">
-        <thead class="bg-gray-200">
-            <tr>
-                <th class="p-2">From</th>
-                <th class="p-2">To</th>
-                <th class="p-2">Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for leave in recent_leaves %}
-            <tr class="border-t">
-                <td class="p-2">{{ leave.start_date }}</td>
-                <td class="p-2">{{ leave.end_date }}</td>
-                <td class="p-2">{{ leave.status }}</td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="3" class="p-3 text-center text-gray-500">
-                    No leave records found
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<!-- Recent Leave Requests -->
+<div class="card">
+    <div class="card-header">
+        <i class="bi bi-calendar-event"></i> Recent Leave Requests
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>From Date</th>
+                        <th>To Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for leave in recent_leaves %}
+                    <tr>
+                        <td>{{ leave.start_date }}</td>
+                        <td>{{ leave.end_date }}</td>
+                        <td>
+                            {% if leave.status == 'Approved' %}
+                            <span class="badge bg-success">{{ leave.status }}</span>
+                            {% elif leave.status == 'Pending' %}
+                            <span class="badge bg-warning">{{ leave.status }}</span>
+                            {% else %}
+                            <span class="badge bg-danger">{{ leave.status }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3" class="text-center text-muted">No leave records found</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
 {% endblock %}
@@ -114,8 +158,17 @@
         data: {
             labels: ['Present', 'Absent'],
             datasets: [{
-                data: [{{ present_days }}, {{ absent_days }}]
+                data: [{{ present_days }}, {{ absent_days }}],
+                backgroundColor: ['#27ae60', '#e74c3c']
             }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
         }
     });
 </script>

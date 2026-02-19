@@ -16,7 +16,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from admin_panel.views import user_login, user_logout, change_password_required, employee_dashboard
+from django.conf import settings
+from django.conf.urls.static import static
+from admin_panel.views import user_login, user_logout, change_password_required
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -24,7 +26,11 @@ urlpatterns = [
     path('login/', user_login, name='login'),
     path('logout/', user_logout, name='logout'),
     path('change-password/', change_password_required, name='change_password_required'),
-    path('employee/dashboard/', employee_dashboard, name='employee_dashboard'),
     path('admin-panel/', include('admin_panel.urls')),
     path('hr/', include('hr_module.urls')),
+    path('employee/', include('employee_module.urls')),
 ]
+
+# Serve media files in development
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,73 +1,214 @@
-{% extends "employee_dashboard/base.html" %}
+{% extends "employee_module/base.html" %}
 {% block title %}My Tasks{% endblock %}
 
 {% block content %}
-<h2 class="text-2xl font-semibold mb-6">My Tasks</h2>
+<!-- Page Header -->
+<div class="page-header mb-4">
+    <h2><i class="bi bi-list-check"></i> My Tasks</h2>
+</div>
 
-<table class="w-full bg-white shadow rounded">
-<thead class="bg-gray-200">
-<tr>
-    <th class="p-3">Title</th>
-    <th class="p-3">Deadline</th>
-    <th class="p-3">Status</th>
-    <th class="p-3">Action</th>
-</tr>
-</thead>
+<!-- Filter by Status -->
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="btn-group" role="group">
+            <a href="{% url 'employee:tasks' %}?status=all" class="btn btn-{% if status_filter == 'all' %}primary{% else %}outline-primary{% endif %}">All</a>
+            <a href="{% url 'employee:tasks' %}?status=Pending" class="btn btn-{% if status_filter == 'Pending' %}primary{% else %}outline-primary{% endif %}">Pending</a>
+            <a href="{% url 'employee:tasks' %}?status=In Progress" class="btn btn-{% if status_filter == 'In Progress' %}primary{% else %}outline-primary{% endif %}">In Progress</a>
+            <a href="{% url 'employee:tasks' %}?status=Completed" class="btn btn-{% if status_filter == 'Completed' %}primary{% else %}outline-primary{% endif %}">Completed</a>
+            <a href="{% url 'employee:tasks' %}?status=Rejected" class="btn btn-{% if status_filter == 'Rejected' %}danger{% else %}outline-danger{% endif %}">Rejected</a>
+        </div>
+    </div>
+</div>
 
-<tbody>
+<!-- Tasks List -->
 {% for task in tasks %}
-<tr class="border-t align-top">
-    <td class="p-3">{{ task.title }}</td>
-    <td class="p-3">{{ task.deadline }}</td>
-    <td class="p-3 font-semibold">{{ task.status }}</td>
+<div class="card mb-3">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-9">
+                <h5 class="card-title mb-2">{{ task.title }}</h5>
+                <p class="card-text text-muted">{{ task.description }}</p>
+            </div>
+            <div class="col-md-3 text-end">
+                {% if task.priority == 'High' or task.priority == 'Urgent' %}
+                <span class="badge bg-danger">{{ task.priority }}</span>
+                {% elif task.priority == 'Medium' %}
+                <span class="badge bg-warning">{{ task.priority }}</span>
+                {% else %}
+                <span class="badge bg-success">{{ task.priority }}</span>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="row mt-3 g-2">
+            <div class="col-md-3">
+                <small class="text-muted">Due Date:</small>
+                <div class="fw-semibold">{{ task.due_date }}</div>
+            </div>
+            <div class="col-md-3">
+                <small class="text-muted">Status:</small>
+                <div>
+                    {% if task.status == 'Completed' %}
+                    <span class="badge bg-success">{{ task.status }}</span>
+                    {% elif task.status == 'In Progress' %}
+                    <span class="badge bg-primary">{{ task.status }}</span>
+                    {% elif task.status == 'Rejected' %}
+                    <span class="badge bg-danger">{{ task.status }}</span>
+                    {% else %}
+                    <span class="badge bg-secondary">{{ task.status }}</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-md-3">
+                <small class="text-muted">Assigned by:</small>
+                <div class="fw-semibold">{{ task.assigned_by.get_full_name|default:task.assigned_by.username }}</div>
+            </div>
+            <div class="col-md-3">
+                <small class="text-muted">Acceptance:</small>
+                <div>
+                    {% if task.acceptance_status == 'Accepted' %}
+                    <span class="badge bg-success">{{ task.acceptance_status }}</span>
+                    {% elif task.acceptance_status == 'Rejected' %}
+                    <span class="badge bg-danger">{{ task.acceptance_status }}</span>
+                    {% else %}
+                    <span class="badge bg-warning">{{ task.acceptance_status }}</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
 
-    <td class="p-3 space-y-2">
-
-        {% if task.status == "Assigned" %}
-        <!-- ACCEPT -->
-        <form method="post" action="{% url 'accept_task' task.id %}">
-            {% csrf_token %}
-            <button class="bg-green-500 text-white px-3 py-1 rounded">
-                Accept
-            </button>
-        </form>
-
-        <!-- REJECT WITH REASON -->
-        <form method="post" action="{% url 'reject_task' task.id %}">
-            {% csrf_token %}
-            <textarea name="reason" required
-                placeholder="Reason for rejection"
-                class="w-full border p-1 rounded"></textarea>
-            <button class="bg-red-500 text-white px-3 py-1 rounded mt-1">
-                Reject
-            </button>
-        </form>
-
-        {% elif task.status == "Accepted" %}
-        <!-- COMPLETE WITH FILE -->
-        <form method="post" enctype="multipart/form-data"
-              action="{% url 'complete_task' task.id %}">
-            {% csrf_token %}
-            <input type="file" name="completion_file" required
-                   class="block mb-2">
-            <button class="bg-blue-500 text-white px-3 py-1 rounded">
-                Mark Completed
-            </button>
-        </form>
-
-        {% else %}
-        <span class="text-gray-400">No Action</span>
+        <!-- Rejection Reason -->
+        {% if task.acceptance_status == 'Rejected' and task.rejection_reason %}
+        <div class="alert alert-danger mt-3 mb-0" role="alert">
+            <strong><i class="bi bi-exclamation-circle"></i> Rejection Reason:</strong> {{ task.rejection_reason }}
+        </div>
         {% endif %}
 
-    </td>
-</tr>
+        <!-- Submission File -->
+        {% if task.submission_file %}
+        <div class="alert alert-success mt-3 mb-0" role="alert">
+            <i class="bi bi-paperclip"></i> <strong>Submitted File:</strong> 
+            <a href="{{ task.submission_file.url }}" target="_blank" class="alert-link">Download</a>
+        </div>
+        {% endif %}
+
+        <!-- Action Buttons -->
+        <div class="mt-3 d-flex gap-2">
+            {% if task.acceptance_status == "Pending" %}
+            <!-- Accept Task -->
+            <form method="post" action="{% url 'employee:accept_task' task.id %}" class="d-inline">
+                {% csrf_token %}
+                <button class="btn btn-success btn-sm">
+                    <i class="bi bi-check-circle"></i> Accept Task
+                </button>
+            </form>
+
+            <!-- Reject Task -->
+            <button onclick="showRejectModal({{ task.id }}, '{{ task.title|escapejs }}')" class="btn btn-danger btn-sm">
+                <i class="bi bi-x-circle"></i> Reject Task
+            </button>
+
+            {% elif task.acceptance_status == "Accepted" %}
+                {% if task.status == "Pending" %}
+                <form method="post" action="{% url 'employee:update_task_status' task.id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="status" value="In Progress">
+                    <button class="btn btn-primary btn-sm">
+                        <i class="bi bi-play-circle"></i> Start Task
+                    </button>
+                </form>
+
+                {% elif task.status == "In Progress" %}
+                <button onclick="showCompleteModal({{ task.id }}, '{{ task.title|escapejs }}')" class="btn btn-success btn-sm">
+                    <i class="bi bi-check-circle"></i> Mark Complete
+                </button>
+                
+                {% elif task.status == "Completed" %}
+                <span class="badge bg-success"><i class="bi bi-check-circle-fill"></i> Task Completed</span>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</div>
 {% empty %}
-<tr>
-    <td colspan="4" class="p-5 text-center text-gray-500">
-        No tasks assigned
-    </td>
-</tr>
+<div class="card">
+    <div class="card-body text-center text-muted">
+        <i class="bi bi-inbox" style="font-size: 3rem;"></i>
+        <p class="mt-2">No tasks found</p>
+    </div>
+</div>
 {% endfor %}
-</tbody>
-</table>
+
+<!-- Reject Task Modal -->
+<div class="modal fade" id="rejectModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Reject Task</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="rejectForm" method="post" action="">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <p class="text-muted mb-3">Task: <span id="rejectTaskTitle" class="fw-semibold"></span></p>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Reason for Rejection: <span class="text-danger">*</span></label>
+                        <textarea name="rejection_reason" required rows="4" class="form-control" placeholder="Explain why you're rejecting this task..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Complete Task Modal -->
+<div class="modal fade" id="completeModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Complete Task</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="completeForm" method="post" action="" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" name="status" value="Completed">
+                <div class="modal-body">
+                    <p class="text-muted mb-3">Task: <span id="completeTaskTitle" class="fw-semibold"></span></p>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Upload Submission File: <span class="text-danger">*</span></label>
+                        <input type="file" name="submission_file" required class="form-control">
+                        <div class="form-text">Upload your work/document for this task (Required)</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">Submit & Complete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function showRejectModal(taskId, taskTitle) {
+    document.getElementById('rejectTaskTitle').textContent = taskTitle;
+    document.getElementById('rejectForm').action = "{% url 'employee:reject_task' 0 %}".replace('/0/', '/' + taskId + '/');
+    var modal = new bootstrap.Modal(document.getElementById('rejectModal'));
+    modal.show();
+}
+
+function showCompleteModal(taskId, taskTitle) {
+    document.getElementById('completeTaskTitle').textContent = taskTitle;
+    document.getElementById('completeForm').action = "{% url 'employee:update_task_status' 0 %}".replace('/0/', '/' + taskId + '/');
+    var modal = new bootstrap.Modal(document.getElementById('completeModal'));
+    modal.show();
+}
+</script>
 {% endblock %}

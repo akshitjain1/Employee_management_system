@@ -76,7 +76,7 @@ def user_login(request):
         elif request.user.role == 'HR':
             return redirect('hr_dashboard')
         else:
-            return redirect('employee_dashboard')
+            return redirect('employee:dashboard')  # updated to use employee_module
     
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -119,7 +119,7 @@ def user_login(request):
                 elif user.role == 'HR':
                     return redirect('hr_dashboard')
                 else:
-                    return redirect('employee_dashboard')
+                    return redirect('employee:dashboard')
             else:
                 user.failed_login_attempts += 1
                 if user.failed_login_attempts >= 5:
@@ -154,7 +154,7 @@ def change_password_required(request):
         elif request.user.role == 'HR':
             return redirect('hr_dashboard')
         else:
-            return redirect('employee_dashboard')
+            return redirect('employee:dashboard')
     
     if request.method == 'POST':
         if 'send_otp' in request.POST:
@@ -719,5 +719,4 @@ def audit_logs(request):
 def hr_dashboard(request):
     return render(request, 'hr_module/dashboard.html')
 
-def employee_dashboard(request):
-    return render(request, 'employee_module/dashboard.html')
+# Employee dashboard is now in employee_module app
