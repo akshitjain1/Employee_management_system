@@ -1,360 +1,354 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.utils.timezone import now
+from django.utils import timezone
 from django.views.decorators.http import require_POST
-from employee_module.models import Task, Attendance, Leave, Salary
-from .models import EmployeeProfile
+from hr_module.models import Task, Attendance, Leave, LeaveBalance
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from functools import wraps
+from django.db.models import Q
 
-def employee_only(view_func):
+User = get_user_model()
+
+# Custom decorator to check if user is employee
+# This ensures only employees can access employee views
+def employee_required(view_func):
     @wraps(view_func)
     def wrapper(request, *args, **kwargs):
         if not request.user.is_authenticated:
-            return redirect('employee_login')
-        if not hasattr(request.user, 'employeeprofile') or not request.user.employeeprofile.is_employee:
-            messages.error(request, "Access denied. Employee account required.")
-            return redirect('employee_login')
+            return redirect('login')
+        if request.user.role != 'Employee':
+            messages.error(request, "Access denied. This page is only for employees")
+            return redirect('login')
         return view_func(request, *args, **kwargs)
     return wrapper
 
-@login_required(login_url='employee_login')
-@employee_only
+@login_required
+@employee_required
 def employee_dashboard(request):
+    """
+    Employee Dashboard View - Shows overview of tasks, attendance, leaves
+    This function displays statistics and recent activities for the logged-in employee
+    """
     user = request.user
-    today = now().date()
+    today = timezone.now().date()
 
-    # Employee Profile
-    try:
-        profile = EmployeeProfile.objects.get(user=user)
-    except EmployeeProfile.DoesNotExist:
-        messages.error(request, "Employee profile not found")
-        return redirect('employee_login')
-
-    # Attendance (today)
+    # Get today's attendance record
     attendance_today = Attendance.objects.filter(
-        employee=user, date=today
+        user=user, date=today
     ).first()
 
-    # Tasks
-    total_tasks = Task.objects.filter(employee=user).count()
-    active_tasks = Task.objects.filter(
-        employee=user
-    ).exclude(status='Completed').count()
+    # Calculate task statistics
+    total_tasks = Task.objects.filter(assigned_to=user).count()
+    pending_tasks = Task.objects.filter(
+        assigned_to=user, status='Pending'
+    ).count()
+    
+    completed_tasks = Task.objects.filter(
+        assigned_to=user, status='Completed'
+    ).count()
 
+    # Find overdue tasks (due date passed but not completed)
     overdue_tasks = Task.objects.filter(
-        employee=user, status='Overdue'
-    ).count()
+        assigned_to=user,
+        due_date__lt=today
+    ).exclude(status__in=['Completed', 'Cancelled']).count()
 
-    # Leaves
+    # Get recent leave applications (last 5)
     recent_leaves = Leave.objects.filter(
-        employee=user
-    ).order_by('-applied_on')[:3]
+        user=user
+    ).order_by('-applied_at')[:5]
 
-    leave_balance = 12 - Leave.objects.filter(
-        employee=user, status='Approved'
-    ).count()
+    # Get or create leave balance for current year
+    try:
+        leave_balance_obj = LeaveBalance.objects.get(user=user, year=today.year)
+        total_leaves = leave_balance_obj.sick_leave + leave_balance_obj.casual_leave + leave_balance_obj.earned_leave
+    except LeaveBalance.DoesNotExist:
+        # Create leave balance if it doesn't exist (for new employees)
+        leave_balance_obj = LeaveBalance.objects.create(user=user, year=today.year)
+        total_leaves = 39  # Default: 12 sick + 12 casual + 15 earned
 
-    # Salary
-    latest_salary = Salary.objects.filter(
-        employee=user, is_credited=True
-    ).order_by('-month').first()
-
-    # Attendance graph data
+    # Calculate attendance statistics
     present_days = Attendance.objects.filter(
-        employee=user, status='Present'
+        user=user, status='Present'
     ).count()
 
     absent_days = Attendance.objects.filter(
-        employee=user, status='Absent'
+        user=user, status='Absent'
     ).count()
 
+    # Prepare context data for template
     context = {
-        'profile': profile,
+        'user': user,
         'attendance_today': attendance_today,
         'total_tasks': total_tasks,
-        'active_tasks': active_tasks,
+        'pending_tasks': pending_tasks,
+        'completed_tasks': completed_tasks,
         'overdue_tasks': overdue_tasks,
         'recent_leaves': recent_leaves,
-        'leave_balance': leave_balance,
-        'salary': latest_salary,
+        'leave_balance': leave_balance_obj,
+        'total_leaves': total_leaves,
         'present_days': present_days,
         'absent_days': absent_days,
     }
 
-    return render(request, 'employee_dashboard/dashboard.html', context)
+    return render(request, 'employee_module/dashboard.html', context)
 
-@login_required(login_url='employee_login')
-@employee_only
+@login_required
+@employee_required
 def employee_tasks(request):
-    tasks = Task.objects.filter(employee=request.user).order_by('-created_at')
-    return render(request, 'employee_dashboard/tasks.html', {'tasks': tasks})
-
-@login_required(login_url='employee_login')
-@employee_only
-@require_POST
-def accept_task(request, task_id):
-    task = get_object_or_404(Task, id=task_id, employee=request.user)
-
-    if task.status == "Assigned":
-        task.status = "Accepted"
-        task.save()
-        messages.success(request, "Task accepted successfully")
-    else:
-        messages.warning(request, "Task cannot be accepted")
-
-    return redirect('employee_tasks')
-
-@login_required(login_url='employee_login')
-@employee_only
-@require_POST
-def reject_task(request, task_id):
-    task = get_object_or_404(Task, id=task_id, employee=request.user)
-
-    reason = request.POST.get('reason')
-
-    if task.status == "Assigned" and reason:
-        task.status = "Rejected"
-        task.rejection_reason = reason
-        task.save()
-        messages.success(request, "Task rejected successfully")
-    else:
-        messages.warning(request, "Task cannot be rejected or reason not provided")
-
-    return redirect('employee_tasks')
-
-@login_required(login_url='employee_login')
-@employee_only
-@require_POST
-def complete_task(request, task_id):
-    task = get_object_or_404(Task, id=task_id, employee=request.user)
-
-    file = request.FILES.get('completion_file')
-
-    if task.status == "Accepted" and file:
-        task.status = "Completed"
-        task.completion_file = file
-        task.save()
-        messages.success(request, "Task completed successfully")
-    else:
-        messages.warning(request, "Task cannot be completed or file not provided")
-
-    return redirect('employee_tasks')
-
-@login_required(login_url='employee_login')
-@employee_only
-def employee_attendance(request):
-    attendance_records = Attendance.objects.filter(
-        employee=request.user
-    ).order_by('-date')
-
-    return render(
-        request,
-        'employee_dashboard/attendance.html',
-        {'attendance_records': attendance_records}
-    )
-
-@login_required(login_url='employee_login')
-@employee_only
-@require_POST
-def mark_attendance(request):
-    user = request.user
-    today = now().date()
-    
-    # Check if attendance already marked today
-    existing = Attendance.objects.filter(employee=user, date=today).first()
-    if existing:
-        messages.warning(request, "Attendance already marked for today")
-        return redirect('employee_attendance')
-    
-    check_in = request.POST.get('check_in')
-    check_out = request.POST.get('check_out')
-    
-    if not check_in or not check_out:
-        messages.error(request, "Both check-in and check-out times are required")
-        return redirect('employee_attendance')
-    
-    # Create attendance record
-    Attendance.objects.create(
-        employee=user,
-        date=today,
-        check_in=check_in,
-        check_out=check_out,
-        status='Pending'  # HR will approve/reject
-    )
-    
-    messages.success(request, "Attendance marked successfully and sent for approval")
-    return redirect('employee_attendance')
-
-@login_required(login_url='employee_login')
-@employee_only
-def employee_leave(request):
-    leaves = Leave.objects.filter(
-        employee=request.user
-    ).order_by('-applied_on')
-
-    return render(
-        request,
-        'employee_dashboard/leave.html',
-        {'leaves': leaves}
-    )
-
-@login_required(login_url='employee_login')
-@employee_only
-@require_POST
-def apply_leave(request):
-    user = request.user
-
-    start_date = request.POST.get('start_date')
-    end_date = request.POST.get('end_date')
-    reason = request.POST.get('reason')
-    document = request.FILES.get('document')  # optional
-
-    # Basic validation
-    if not (start_date and end_date and reason):
-        messages.error(request, "All fields are required except document")
-        return redirect('employee_leave')
-
-    # Create leave request (HR will approve/reject)
-    Leave.objects.create(
-        employee=user,
-        start_date=start_date,
-        end_date=end_date,
-        reason=reason,
-        document=document,   # can be None
-        status='Pending'
-    )
-
-    messages.success(request, "Leave application submitted successfully")
-    return redirect('employee_leave')
-
-
-@login_required(login_url='employee_login')
-@employee_only
-def employee_salary(request):
     """
-    Employee can ONLY view salary details.
-    HR controls creation, calculation, and crediting.
+    Employee Tasks View - Shows all tasks assigned to the employee
+    Allows filtering by status (All/Pending/In Progress/Completed)
     """
-
-    salaries = (
-        Salary.objects
-        .filter(employee=request.user)
-        .order_by('-month')   # latest first
-    )
-
-    return render(
-        request,
-        'employee_dashboard/salary.html',
-        {
-            'salaries': salaries
-        }
-    )
-
-def employee_login(request):
-    # Redirect if already logged in
-    if request.user.is_authenticated:
-        if hasattr(request.user, 'employeeprofile') and request.user.employeeprofile.is_employee:
-            return redirect('employee_dashboard')
+    # Get filter parameter from URL query string
+    status_filter = request.GET.get('status', 'all')
     
-    if request.method == "POST":
-        emp_id = request.POST.get('employee_id')
-        password = request.POST.get('password')
-
-        if not emp_id or not password:
-            messages.error(request, "Both fields are required")
-            return render(request, 'employee_dashboard/login.html')
-
-        try:
-            employee = EmployeeProfile.objects.get(employee_id=emp_id)
-            user = authenticate(request, username=employee.user.username, password=password)
-
-            if user is not None and employee.is_employee:
-                login(request, user)
-                messages.success(request, f"Welcome {user.username}!")
-                return redirect('employee_dashboard')
-            else:
-                messages.error(request, "Invalid credentials or not an employee account")
-
-        except EmployeeProfile.DoesNotExist:
-            messages.error(request, "Employee ID not found")
-
-    return render(request, 'employee_dashboard/login.html')
-
-def employee_register(request):
-    # Redirect if already logged in
-    if request.user.is_authenticated:
-        return redirect('employee_dashboard')
+    # Fetch all tasks assigned to current logged-in employee
+    tasks = Task.objects.filter(assigned_to=request.user).order_by('-created_at')
     
-    if request.method == "POST":
-        username = request.POST.get('username')
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        confirm_password = request.POST.get('confirm_password')
-        employee_id = request.POST.get('employee_id')
-        department = request.POST.get('department')
-        designation = request.POST.get('designation')
+    # Apply status filter if selected
+    if status_filter != 'all':
+        tasks = tasks.filter(status=status_filter)
+    
+    context = {
+        'tasks': tasks,
+        'status_filter': status_filter
+    }
+    return render(request, 'employee_module/tasks.html', context)
 
-        # Validation
-        if not all([username, email, password, confirm_password, employee_id, department, designation]):
-            messages.error(request, "All fields are required")
-            return redirect('employee_register')
-
-        # Password match check
-        if password != confirm_password:
-            messages.error(request, "Passwords do not match")
-            return redirect('employee_register')
-
-        # Password strength check (optional)
-        if len(password) < 6:
-            messages.error(request, "Password must be at least 6 characters long")
-            return redirect('employee_register')
-
-        # Username already exists
-        if User.objects.filter(username=username).exists():
-            messages.error(request, "Username already exists")
-            return redirect('employee_register')
-
-        # Email already exists
-        if User.objects.filter(email=email).exists():
-            messages.error(request, "Email already exists")
-            return redirect('employee_register')
-
-        # Employee ID already exists
-        if EmployeeProfile.objects.filter(employee_id=employee_id).exists():
-            messages.error(request, "Employee ID already exists")
-            return redirect('employee_register')
-
-        try:
-            # Create User
-            user = User.objects.create_user(
-                username=username,
-                email=email,
-                password=password
-            )
-
-            # Create Employee Profile
-            EmployeeProfile.objects.create(
-                user=user,
-                employee_id=employee_id,
-                department=department,
-                designation=designation,
-                is_employee=True  # Explicitly set to True
-            )
-
-            messages.success(request, "Employee registered successfully! Please login.")
-            return redirect('employee_login')
+@login_required
+@employee_required
+def update_task_status(request, task_id):
+    """
+    Update Task Status View - Allows status transitions and file submission
+    Pending → In Progress → Completed (one direction only)
+    File submission required when completing task
+    """
+    # Get task ensuring it belongs to current employee
+    task = get_object_or_404(Task, id=task_id, assigned_to=request.user)
+    
+    if request.method == 'POST':
+        new_status = request.POST.get('status')
         
-        except Exception as e:
-            messages.error(request, f"Registration failed: {str(e)}")
-            return redirect('employee_register')
+        # Only allow certain status transitions (workflow validation)
+        if task.status == 'Pending' and new_status == 'In Progress':
+            task.status = 'In Progress'
+            task.save()
+            messages.success(request, "Task status updated to In Progress")
+        elif task.status == 'In Progress' and new_status == 'Completed':
+            # Check if file is uploaded
+            submission_file = request.FILES.get('submission_file')
+            if not submission_file:
+                messages.error(request, "Please upload a file to complete the task")
+                return redirect('employee:tasks')
+            
+            task.status = 'Completed'
+            task.submission_file = submission_file
+            task.completed_at = timezone.now()  # Record completion time
+            task.save()
+            messages.success(request, "Task marked as completed with submission file!")
+        else:
+            messages.warning(request, "Invalid status transition")
+    
+    return redirect('employee:tasks')
 
-    return render(request, 'employee_dashboard/register.html')
+@login_required
+@employee_required
+def employee_attendance(request):
+    """
+    Employee Attendance View - Shows attendance history (read-only)
+    HR marks attendance, employees can only view their records
+    """
+    # Get last 30 attendance records (most recent first)
+    attendance_records = Attendance.objects.filter(
+        user=request.user
+    ).order_by('-date')[:30]
 
-@login_required(login_url='employee_login')
-def employee_logout(request):
-    logout(request)
-    messages.success(request, "You have been logged out successfully")
-    return redirect('employee_login')
+    # Calculate attendance statistics
+    total_records = Attendance.objects.filter(user=request.user).count()
+    present_count = Attendance.objects.filter(user=request.user, status='Present').count()
+    
+    # Calculate percentage (avoid division by zero)
+    if total_records > 0:
+        attendance_percentage = round((present_count / total_records) * 100, 2)
+    else:
+        attendance_percentage = 0
+
+    context = {
+        'attendance_records': attendance_records,
+        'attendance_percentage': attendance_percentage,
+        'total_records': total_records,
+        'present_count': present_count
+    }
+    
+    return render(request, 'employee_module/attendance.html', context)
+
+@login_required
+@employee_required
+def employee_leave(request):
+    """
+    Employee Leave View - Shows leave balance and history
+    Displays all leave applications with their status
+    """
+    # Get all leave applications for the logged-in employee (newest first)
+    leaves = Leave.objects.filter(
+        user=request.user
+    ).order_by('-applied_at')
+
+    # Get or create leave balance for current year
+    today = timezone.now().date()
+    try:
+        leave_balance = LeaveBalance.objects.get(user=request.user, year=today.year)
+    except LeaveBalance.DoesNotExist:
+        # Auto-create if doesn't exist (for new employees or new year)
+        leave_balance = LeaveBalance.objects.create(user=request.user, year=today.year)
+
+    context = {
+        'leaves': leaves,
+        'leave_balance': leave_balance
+    }
+
+    return render(request, 'employee_module/leave.html', context)
+
+@login_required
+@employee_required
+def apply_leave(request):
+    """
+    Apply for Leave View - Handles leave application submission
+    Validates dates and checks for overlapping leaves
+    """
+    if request.method == 'POST':
+        leave_type = request.POST.get('leave_type')
+        start_date = request.POST.get('start_date')
+        end_date = request.POST.get('end_date')
+        reason = request.POST.get('reason')
+
+        # Check if all fields are filled
+        if not all([leave_type, start_date, end_date, reason]):
+            messages.error(request, "All fields are required")
+            return redirect('employee:leave')
+
+        # Convert string dates to date objects for comparison
+        from datetime import datetime
+        start = datetime.strptime(start_date, '%Y-%m-%d').date()
+        end = datetime.strptime(end_date, '%Y-%m-%d').date()
+        
+        # Validate that end date is not before start date
+        if start > end:
+            messages.error(request, "End date cannot be before start date")
+            return redirect('employee:leave')
+
+        # Check for overlapping leaves (approved or pending)
+        # We use Q objects for complex OR conditions
+        overlapping = Leave.objects.filter(
+            user=request.user,
+            status__in=['Pending', 'Approved']
+        ).filter(
+            Q(start_date__lte=end) & Q(end_date__gte=start)
+        )
+
+        if overlapping.exists():
+            messages.error(request, "You already have a leave request for this period")
+            return redirect('employee:leave')
+
+        # Create leave request with status as Pending
+        Leave.objects.create(
+            user=request.user,
+            leave_type=leave_type,
+            start_date=start,
+            end_date=end,
+            reason=reason,
+            status='Pending'
+        )
+
+        messages.success(request, "Leave application submitted successfully!")
+        return redirect('employee:leave')
+
+    return redirect('employee:leave')
+
+@login_required
+@employee_required
+def accept_task(request, task_id):
+    """
+    Accept Task View - Employee accepts the assigned task
+    Only pending acceptance tasks can be accepted
+    """
+    task = get_object_or_404(Task, id=task_id, assigned_to=request.user)
+    
+    if task.acceptance_status == 'Pending':
+        task.acceptance_status = 'Accepted'
+        task.save()
+        messages.success(request, f"Task '{task.title}' accepted successfully!")
+    else:
+        messages.warning(request, "This task has already been processed")
+    
+    return redirect('employee:tasks')
+
+@login_required
+@employee_required
+def reject_task(request, task_id):
+    """
+    Reject Task View - Employee rejects the assigned task with reason
+    Requires rejection reason to be provided
+    """
+    task = get_object_or_404(Task, id=task_id, assigned_to=request.user)
+    
+    if request.method == 'POST':
+        reason = request.POST.get('rejection_reason')
+        
+        if not reason or not reason.strip():
+            messages.error(request, "Please provide a reason for rejection")
+            return redirect('employee:tasks')
+        
+        if task.acceptance_status == 'Pending':
+            task.acceptance_status = 'Rejected'
+            task.status = 'Rejected'
+            task.rejection_reason = reason
+            task.save()
+            messages.success(request, f"Task '{task.title}' rejected")
+        else:
+            messages.warning(request, "This task has already been processed")
+    
+    return redirect('employee:tasks')
+
+@login_required
+@employee_required
+def mark_attendance(request):
+    """
+    Mark Attendance View - Employee marks their own attendance
+    HR will verify it later
+    """
+    if request.method == 'POST':
+        today = timezone.now().date()
+        check_in = request.POST.get('check_in_time')
+        check_out = request.POST.get('check_out_time')
+        notes = request.POST.get('notes', '')
+        
+        # Check if attendance already marked for today
+        existing = Attendance.objects.filter(user=request.user, date=today).first()
+        if existing:
+            messages.warning(request, "Attendance already marked for today")
+            return redirect('employee:attendance')
+        
+        # Validate check-in and check-out times
+        if not check_in or not check_out:
+            messages.error(request, "Please provide both check-in and check-out times")
+            return redirect('employee:attendance')
+        
+        # Create attendance record (pending HR verification)
+        Attendance.objects.create(
+            user=request.user,
+            date=today,
+            status='Present',
+            check_in_time=check_in,
+            check_out_time=check_out,
+            notes=notes,
+            marked_by=request.user,
+            is_verified=False  # Pending HR verification
+        )
+        
+        messages.success(request, "Attendance marked successfully! Waiting for HR verification")
+        return redirect('employee:attendance')
+    
+    return redirect('employee:attendance')

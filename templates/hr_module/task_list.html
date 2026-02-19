@@ -62,6 +62,7 @@
                         <th>Assigned To</th>
                         <th>Priority</th>
                         <th>Status</th>
+                        <th>Acceptance</th>
                         <th>Due Date</th>
                         <th>Created</th>
                         <th>Actions</th>
@@ -74,6 +75,9 @@
                             <strong>{{ task.title }}</strong>
                             {% if task.is_overdue %}
                             <br><small class="text-danger"><i class="bi bi-exclamation-triangle"></i> Overdue</small>
+                            {% endif %}
+                            {% if task.submission_file %}
+                            <br><small class="text-success"><i class="bi bi-paperclip"></i> File Submitted</small>
                             {% endif %}
                         </td>
                         <td>
@@ -98,8 +102,19 @@
                             <span class="badge bg-primary">{{ task.status }}</span>
                             {% elif task.status == 'On Hold' %}
                             <span class="badge bg-warning">{{ task.status }}</span>
+                            {% elif task.status == 'Rejected' %}
+                            <span class="badge bg-danger">{{ task.status }}</span>
                             {% else %}
                             <span class="badge bg-secondary">{{ task.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if task.acceptance_status == 'Accepted' %}
+                            <span class="badge bg-success">Accepted</span>
+                            {% elif task.acceptance_status == 'Rejected' %}
+                            <span class="badge bg-danger">Rejected</span>
+                            {% else %}
+                            <span class="badge bg-warning">Pending</span>
                             {% endif %}
                         </td>
                         <td>{{ task.due_date }}</td>

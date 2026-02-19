@@ -20,6 +20,8 @@ class Attendance(models.Model):
     check_out_time = models.TimeField(null=True, blank=True)
     notes = models.TextField(blank=True, null=True)
     marked_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name='marked_attendances')
+    is_verified = models.BooleanField(default=False)
+    verified_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='verified_attendances')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -93,6 +95,13 @@ class Task(models.Model):
         ('Completed', 'Completed'),
         ('On Hold', 'On Hold'),
         ('Cancelled', 'Cancelled'),
+        ('Rejected', 'Rejected'),
+    )
+    
+    ACCEPTANCE_CHOICES = (
+        ('Pending', 'Pending'),
+        ('Accepted', 'Accepted'),
+        ('Rejected', 'Rejected'),
     )
     
     assigned_to = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='assigned_tasks')
@@ -101,6 +110,9 @@ class Task(models.Model):
     description = models.TextField()
     priority = models.CharField(max_length=20, choices=PRIORITY_CHOICES, default='Medium')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')
+    acceptance_status = models.CharField(max_length=20, choices=ACCEPTANCE_CHOICES, default='Pending')
+    rejection_reason = models.TextField(blank=True, null=True)
+    submission_file = models.FileField(upload_to='task_submissions/', blank=True, null=True)
     due_date = models.DateField()
     completed_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

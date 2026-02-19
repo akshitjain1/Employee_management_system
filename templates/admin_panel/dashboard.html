@@ -3,83 +3,97 @@
 {% block title %}Admin Dashboard - EMS{% endblock %}
 
 {% block content %}
-<!-- dashboard stats -->
-<div class="row">
-    <div class="col-12">
-        <h2 style="margin-bottom: 20px;"><i class="bi bi-speedometer2"></i> Admin Dashboard</h2>
+<!-- Page Header -->
+<div class="page-header mb-4">
+    <h2><i class="bi bi-speedometer2"></i> Admin Dashboard</h2>
+</div>
+
+<!-- Quick Actions -->
+<div class="card mb-4">
+    <div class="card-header">
+        <i class="bi bi-lightning-fill"></i> Quick Actions
+    </div>
+    <div class="card-body">
+        <div class="row g-2">
+            <div class="col-md-3">
+                <a href="{% url 'create_employee' %}" class="btn btn-primary w-100">
+                    <i class="bi bi-person-plus-fill"></i> Add Employee
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="{% url 'employee_list' %}" class="btn btn-secondary w-100">
+                    <i class="bi bi-people-fill"></i> View All Employees
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="{% url 'export_employees_csv' %}" class="btn btn-success w-100">
+                    <i class="bi bi-download"></i> Export to CSV
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="{% url 'audit_logs' %}" class="btn btn-secondary w-100">
+                    <i class="bi bi-journal-text"></i> Audit Logs
+                </a>
+            </div>
+        </div>
     </div>
 </div>
 
-<!-- Quick actions -->
-<div class="row mb-4">
-    <div class="col-12">
-        <div class="card border-primary">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0"><i class="bi bi-lightning-fill"></i> Quick Actions</h5>
-            </div>
+<!-- Stats Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card stat-card">
             <div class="card-body">
-                <div class="row g-2">
-                    <div class="col-md-3">
-                        <a href="{% url 'create_employee' %}" class="btn btn-primary w-100">
-                            <i class="bi bi-person-plus-fill"></i> Add Employee
-                        </a>
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-label">Total Employees</div>
+                        <div class="stat-value">{{ total_employees }}</div>
+                        <small class="text-muted">All employees in system</small>
                     </div>
-                    <div class="col-md-3">
-                        <a href="{% url 'employee_list' %}" class="btn btn-info w-100">
-                            <i class="bi bi-people-fill"></i> View All Employees
-                        </a>
-                    </div>
-                    <div class="col-md-3">
-                        <a href="{% url 'export_employees_csv' %}" class="btn btn-success w-100">
-                            <i class="bi bi-download"></i> Export to CSV
-                        </a>
-                    </div>
-                    <div class="col-md-3">
-                        <a href="{% url 'audit_logs' %}" class="btn btn-secondary w-100">
-                            <i class="bi bi-journal-text"></i> Audit Logs
-                        </a>
-                    </div>
+                    <i class="bi bi-people-fill stat-icon"></i>
                 </div>
             </div>
         </div>
     </div>
-</div>
-
-<!-- Stats cards -->
-<div class="row g-3 mb-4">
     <div class="col-md-3">
-        <div class="card text-white bg-primary">
+        <div class="card stat-card success">
             <div class="card-body">
-                <h5 class="card-title"><i class="bi bi-people-fill"></i> Total Employees</h5>
-                <h2 class="mb-0">{{ total_employees }}</h2>
-                <small>All employees in system</small>
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-label">Active Employees</div>
+                        <div class="stat-value">{{ active_employees }}</div>
+                        <small class="text-muted">Currently active</small>
+                    </div>
+                    <i class="bi bi-person-check-fill stat-icon"></i>
+                </div>
             </div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card text-white bg-success">
+        <div class="card stat-card warning">
             <div class="card-body">
-                <h5 class="card-title"><i class="bi bi-person-check-fill"></i> Active Employees</h5>
-                <h2 class="mb-0">{{ active_employees }}</h2>
-                <small>Currently active</small>
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-label">Inactive Employees</div>
+                        <div class="stat-value">{{ inactive_employees }}</div>
+                        <small class="text-muted">Deactivated accounts</small>
+                    </div>
+                    <i class="bi bi-person-x-fill stat-icon"></i>
+                </div>
             </div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card text-white bg-warning">
+        <div class="card stat-card info">
             <div class="card-body">
-                <h5 class="card-title"><i class="bi bi-person-x-fill"></i> Inactive Employees</h5>
-                <h2 class="mb-0">{{ inactive_employees }}</h2>
-                <small>Deactivated accounts</small>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card text-white bg-info">
-            <div class="card-body">
-                <h5 class="card-title"><i class="bi bi-person-badge-fill"></i> Total HR</h5>
-                <h2 class="mb-0">{{ total_hr }}</h2>
-                <small>HR personnel</small>
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-label">Total HR</div>
+                        <div class="stat-value">{{ total_hr }}</div>
+                        <small class="text-muted">HR personnel</small>
+                    </div>
+                    <i class="bi bi-person-badge-fill stat-icon"></i>
+                </div>
             </div>
         </div>
     </div>
@@ -89,79 +103,79 @@
 <div class="row g-3 mb-4">
     <div class="col-md-6">
         <div class="card">
+            <div class="card-header">
+                <i class="bi bi-cash-stack"></i> Total Salary Expenditure
+            </div>
             <div class="card-body">
-                <h5 class="card-title"><i class="bi bi-cash-stack"></i> Total Salary Expenditure</h5>
-                <h2 class="text-success">₹{{ total_salary|floatformat:2 }}</h2>
+                <h2 class="text-success mb-2">₹{{ total_salary|floatformat:2 }}</h2>
                 <small class="text-muted">Monthly payroll estimate</small>
             </div>
         </div>
     </div>
     <div class="col-md-6">
         <div class="card">
+            <div class="card-header">
+                <i class="bi bi-bar-chart-fill"></i> Department Distribution
+            </div>
             <div class="card-body">
-                <h5 class="card-title"><i class="bi bi-bar-chart-fill"></i> Department Distribution</h5>
                 <canvas id="departmentChart"></canvas>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Recent employees -->
-<div class="row g-3">
-    <div class="col-md-12">
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0"><i class="bi bi-clock-history"></i> Recent Employees</h5>
-                <a href="{% url 'employee_list' %}" class="btn btn-sm btn-primary">View All</a>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Employee ID</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Role</th>
-                                <th>Department</th>
-                                <th>Status</th>
-                                <th>Joined</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for emp in recent_employees %}
-                            <tr>
-                                <td>{{ emp.employee_id|default:"N/A" }}</td>
-                                <td>{{ emp.get_full_name|default:"N/A" }}</td>
-                                <td>{{ emp.email }}</td>
-                                <td><span class="badge bg-secondary">{{ emp.role }}</span></td>
-                                <td>{{ emp.department|default:"N/A" }}</td>
-                                <td>
-                                    {% if emp.account_locked %}
-                                    <span class="badge bg-dark">Locked</span>
-                                    {% elif emp.is_active %}
-                                    <span class="badge bg-success">Active</span>
-                                    {% else %}
-                                    <span class="badge bg-danger">Inactive</span>
-                                    {% endif %}
-                                </td>
-                                <td>{{ emp.date_joined|date:"Y-m-d" }}</td>
-                                <td>
-                                    <a href="{% url 'employee_detail' emp.id %}" class="btn btn-sm btn-info">
-                                        <i class="bi bi-eye-fill"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                            {% empty %}
-                            <tr>
-                                <td colspan="8" class="text-center">No employees yet</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+<!-- Recent Employees -->
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-clock-history"></i> Recent Employees</span>
+        <a href="{% url 'employee_list' %}" class="btn btn-sm btn-primary">View All</a>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Employee ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Department</th>
+                        <th>Status</th>
+                        <th>Joined</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for emp in recent_employees %}
+                    <tr>
+                        <td>{{ emp.employee_id|default:"N/A" }}</td>
+                        <td>{{ emp.get_full_name|default:"N/A" }}</td>
+                        <td>{{ emp.email }}</td>
+                        <td><span class="badge bg-secondary">{{ emp.role }}</span></td>
+                        <td>{{ emp.department|default:"N/A" }}</td>
+                        <td>
+                            {% if emp.account_locked %}
+                            <span class="badge bg-dark">Locked</span>
+                            {% elif emp.is_active %}
+                            <span class="badge bg-success">Active</span>
+                            {% else %}
+                            <span class="badge bg-danger">Inactive</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ emp.date_joined|date:"Y-m-d" }}</td>
+                        <td>
+                            <a href="{% url 'employee_detail' emp.id %}" class="btn btn-sm btn-primary">
+                                <i class="bi bi-eye-fill"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center text-muted">No employees yet</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
@@ -169,7 +183,7 @@
 
 {% block extra_js %}
 <script>
-    // chart for departments
+    // Department Distribution Chart
     var deptData = {{ departments|safe }};
     if (!deptData) {
         deptData = [];
@@ -191,14 +205,8 @@
                 datasets: [{
                     data: counts,
                     backgroundColor: [
-                        '#FF6384',
-                        '#36A2EB',
-                        '#FFCE56',
-                        '#4BC0C0',
-                        '#9966FF',
-                        '#FF9F40',
-                        '#FF5733',
-                        '#C70039'
+                        '#2c3e50', '#27ae60', '#3498db', '#f39c12', 
+                        '#95a5a6', '#e74c3c', '#9b59b6', '#1abc9c'
                     ]
                 }]
             },

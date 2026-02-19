@@ -1,8 +1,3 @@
-from django.contrib import admin
-from .models import EmployeeProfile, Attendance, Salary, Task, Leave
-# Register your models here.
-admin.site.register(EmployeeProfile)
-admin.site.register(Attendance)
-admin.site.register(Task)
-admin.site.register(Leave)
-admin.site.register(Salary)
+# Employee module doesn't have its own models
+# All models are in hr_module and users app
+# Admin configuration is done in those respective apps

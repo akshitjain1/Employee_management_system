@@ -1,125 +1,159 @@
 {% extends 'base.html' %}
 
 {% block title %}HR Dashboard - EMS{% endblock %}
-<!-- this is HR dashboard template -->
+
 {% block content %}
-<!-- Dashboard header -->
-<div class="row">
-    <div class="col-12">
-        <h2 style="margin-bottom: 20px;"><i class="bi bi-speedometer2"></i> HR Dashboard</h2>
+<!-- Page Header -->
+<div class="page-header mb-4">
+    <h2><i class="bi bi-speedometer2"></i> HR Dashboard</h2>
+</div>
+
+<!-- Quick Actions -->
+<div class="card mb-4">
+    <div class="card-header">
+        <i class="bi bi-lightning-fill"></i> Quick Actions
+    </div>
+    <div class="card-body">
+        <div class="row g-2">
+            <div class="col-md-3">
+                <a href="{% url 'bulk_mark_attendance' %}" class="btn btn-primary w-100">
+                    <i class="bi bi-calendar-check"></i> Mark Attendance
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="{% url 'leave_requests' %}" class="btn btn-secondary w-100">
+                    <i class="bi bi-calendar-x"></i> Leave Requests
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="{% url 'create_task' %}" class="btn btn-success w-100">
+                    <i class="bi bi-plus-circle"></i> Create Task
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="{% url 'task_list' %}" class="btn btn-secondary w-100">
+                    <i class="bi bi-list-task"></i> View Tasks
+                </a>
+            </div>
+        </div>
     </div>
 </div>
 
-<!-- Quick actions -->
-<div class="row mb-4">
-    <div class="col-12">
-        <div class="card border-primary">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0"><i class="bi bi-lightning-fill"></i> Quick Actions</h5>
-            </div>
+<!-- Attendance Stats -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card stat-card">
             <div class="card-body">
-                <div class="row g-2">
-                    <div class="col-md-3">
-                        <a href="{% url 'bulk_mark_attendance' %}" class="btn btn-primary w-100">
-                            <i class="bi bi-calendar-check"></i> Mark Attendance
-                        </a>
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-label">Total Employees</div>
+                        <div class="stat-value">{{ total_employees }}</div>
+                        <small class="text-muted">Active employees</small>
                     </div>
-                    <div class="col-md-3">
-                        <a href="{% url 'leave_requests' %}" class="btn btn-warning w-100">
-                            <i class="bi bi-calendar-x"></i> Leave Requests
-                        </a>
+                    <i class="bi bi-people-fill stat-icon"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card success">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-label">Present Today</div>
+                        <div class="stat-value">{{ present_today }}</div>
+                        <small class="text-muted">Marked as present</small>
                     </div>
-                    <div class="col-md-3">
-                        <a href="{% url 'create_task' %}" class="btn btn-success w-100">
-                            <i class="bi bi-plus-circle"></i> Create Task
-                        </a>
+                    <i class="bi bi-check-circle-fill stat-icon"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card danger">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-label">Absent Today</div>
+                        <div class="stat-value">{{ absent_today }}</div>
+                        <small class="text-muted">Marked as absent</small>
                     </div>
-                    <div class="col-md-3">
-                        <a href="{% url 'task_list' %}" class="btn btn-info w-100">
-                            <i class="bi bi-list-task"></i> View Tasks
-                        </a>
+                    <i class="bi bi-x-circle-fill stat-icon"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card warning">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-label">On Leave Today</div>
+                        <div class="stat-value">{{ on_leave_today }}</div>
+                        <small class="text-muted">Employees on leave</small>
                     </div>
+                    <i class="bi bi-calendar-x stat-icon"></i>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Stats cards -->
+<!-- Leave and Task Stats -->
 <div class="row g-3 mb-4">
     <div class="col-md-3">
-        <div class="card text-white bg-primary">
+        <div class="card stat-card info">
             <div class="card-body">
-                <h5 class="card-title"><i class="bi bi-people-fill"></i> Total Employees</h5>
-                <h2 class="mb-0">{{ total_employees }}</h2>
-                <small>Active employees</small>
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-label">Pending Leaves</div>
+                        <div class="stat-value">{{ pending_leaves }}</div>
+                        <small class="text-muted">Awaiting approval</small>
+                    </div>
+                    <i class="bi bi-hourglass-split stat-icon"></i>
+                </div>
             </div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card text-white bg-success">
+        <div class="card stat-card success">
             <div class="card-body">
-                <h5 class="card-title"><i class="bi bi-check-circle-fill"></i> Present Today</h5>
-                <h2 class="mb-0">{{ present_today }}</h2>
-                <small>Marked as present</small>
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-label">Approved Leaves</div>
+                        <div class="stat-value">{{ approved_leaves }}</div>
+                        <small class="text-muted">Currently on leave</small>
+                    </div>
+                    <i class="bi bi-check-circle stat-icon"></i>
+                </div>
             </div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card text-white bg-danger">
+        <div class="card stat-card">
             <div class="card-body">
-                <h5 class="card-title"><i class="bi bi-x-circle-fill"></i> Absent Today</h5>
-                <h2 class="mb-0">{{ absent_today }}</h2>
-                <small>Marked as absent</small>
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-label">Pending Tasks</div>
+                        <div class="stat-value">{{ pending_tasks }}</div>
+                        <small class="text-muted">Assigned tasks</small>
+                    </div>
+                    <i class="bi bi-list-task stat-icon"></i>
+                </div>
             </div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card text-white bg-warning">
+        <div class="card stat-card danger">
             <div class="card-body">
-                <h5 class="card-title"><i class="bi bi-calendar-x"></i> On Leave Today</h5>
-                <h2 class="mb-0">{{ on_leave_today }}</h2>
-                <small>Employees on leave</small>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Leave and Task stats -->
-<div class="row g-3 mb-4">
-    <div class="col-md-3">
-        <div class="card text-white bg-info">
-            <div class="card-body">
-                <h5 class="card-title"><i class="bi bi-hourglass-split"></i> Pending Leaves</h5>
-                <h2 class="mb-0">{{ pending_leaves }}</h2>
-                <small>Awaiting approval</small>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card text-white bg-success">
-            <div class="card-body">
-                <h5 class="card-title"><i class="bi bi-check-circle"></i> Approved Leaves</h5>
-                <h2 class="mb-0">{{ approved_leaves }}</h2>
-                <small>Currently on leave</small>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card text-white bg-secondary">
-            <div class="card-body">
-                <h5 class="card-title"><i class="bi bi-list-task"></i> Pending Tasks</h5>
-                <h2 class="mb-0">{{ pending_tasks }}</h2>
-                <small>Assigned tasks</small>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card text-white bg-danger">
-            <div class="card-body">
-                <h5 class="card-title"><i class="bi bi-exclamation-triangle"></i> Overdue Tasks</h5>
-                <h2 class="mb-0">{{ overdue_tasks }}</h2>
-                <small>Past due date</small>
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-label">Overdue Tasks</div>
+                        <div class="stat-value">{{ overdue_tasks }}</div>
+                        <small class="text-muted">Past due date</small>
+                    </div>
+                    <i class="bi bi-exclamation-triangle stat-icon"></i>
+                </div>
             </div>
         </div>
     </div>
@@ -131,7 +165,7 @@
     <div class="col-md-6">
         <div class="card">
             <div class="card-header">
-                <h5 class="mb-0"><i class="bi bi-pie-chart"></i> Department Distribution</h5>
+                <i class="bi bi-pie-chart"></i> Department Distribution
             </div>
             <div class="card-body">
                 <canvas id="departmentChart"></canvas>
@@ -143,7 +177,7 @@
     <div class="col-md-6">
         <div class="card">
             <div class="card-header">
-                <h5 class="mb-0"><i class="bi bi-calendar-event"></i> Recent Leave Requests</h5>
+                <i class="bi bi-calendar-event"></i> Recent Leave Requests
             </div>
             <div class="card-body">
                 {% if recent_leaves %}
@@ -155,12 +189,12 @@
                             <small>{{ leave.applied_at|date:"M d, Y" }}</small>
                         </div>
                         <p class="mb-1">{{ leave.leave_type }}: {{ leave.start_date }} to {{ leave.end_date }}</p>
-                        <small class="badge bg-warning">{{ leave.status }}</small>
+                        <span class="badge bg-warning">{{ leave.status }}</span>
                     </a>
                     {% endfor %}
                 </div>
                 {% else %}
-                <p class="text-muted">No pending leave requests.</p>
+                <p class="text-muted text-center">No pending leave requests.</p>
                 {% endif %}
             </div>
         </div>
@@ -168,59 +202,55 @@
 </div>
 
 <!-- Recent Tasks -->
-<div class="row g-3 mb-4">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0"><i class="bi bi-list-check"></i> Recent Tasks Assigned</h5>
-            </div>
-            <div class="card-body">
-                {% if recent_tasks %}
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Task</th>
-                                <th>Assigned To</th>
-                                <th>Priority</th>
-                                <th>Status</th>
-                                <th>Due Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for task in recent_tasks %}
-                            <tr>
-                                <td><a href="{% url 'task_detail' task.id %}">{{ task.title }}</a></td>
-                                <td>{{ task.assigned_to.first_name }} {{ task.assigned_to.last_name }}</td>
-                                <td>
-                                    {% if task.priority == 'Urgent' %}
-                                    <span class="badge bg-danger">{{ task.priority }}</span>
-                                    {% elif task.priority == 'High' %}
-                                    <span class="badge bg-warning">{{ task.priority }}</span>
-                                    {% else %}
-                                    <span class="badge bg-info">{{ task.priority }}</span>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if task.status == 'Completed' %}
-                                    <span class="badge bg-success">{{ task.status }}</span>
-                                    {% elif task.status == 'In Progress' %}
-                                    <span class="badge bg-primary">{{ task.status }}</span>
-                                    {% else %}
-                                    <span class="badge bg-secondary">{{ task.status }}</span>
-                                    {% endif %}
-                                </td>
-                                <td>{{ task.due_date }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                {% else %}
-                <p class="text-muted">No recent tasks.</p>
-                {% endif %}
-            </div>
+<div class="card">
+    <div class="card-header">
+        <i class="bi bi-list-check"></i> Recent Tasks Assigned
+    </div>
+    <div class="card-body">
+        {% if recent_tasks %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Task</th>
+                        <th>Assigned To</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                        <th>Due Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for task in recent_tasks %}
+                    <tr>
+                        <td><a href="{% url 'task_detail' task.id %}">{{ task.title }}</a></td>
+                        <td>{{ task.assigned_to.first_name }} {{ task.assigned_to.last_name }}</td>
+                        <td>
+                            {% if task.priority == 'Urgent' %}
+                            <span class="badge bg-danger">{{ task.priority }}</span>
+                            {% elif task.priority == 'High' %}
+                            <span class="badge bg-warning">{{ task.priority }}</span>
+                            {% else %}
+                            <span class="badge bg-secondary">{{ task.priority }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if task.status == 'Completed' %}
+                            <span class="badge bg-success">{{ task.status }}</span>
+                            {% elif task.status == 'In Progress' %}
+                            <span class="badge bg-primary">{{ task.status }}</span>
+                            {% else %}
+                            <span class="badge bg-secondary">{{ task.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ task.due_date }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
+        {% else %}
+        <p class="text-muted text-center">No recent tasks.</p>
+        {% endif %}
     </div>
 </div>
 
@@ -237,14 +267,8 @@
             datasets: [{
                 data: {{ dept_counts|safe }},
                 backgroundColor: [
-                    '#007bff',
-                    '#28a745',
-                    '#ffc107',
-                    '#dc3545',
-                    '#17a2b8',
-                    '#6c757d',
-                    '#e83e8c',
-                    '#fd7e14'
+                    '#2c3e50', '#27ae60', '#3498db', '#f39c12',
+                    '#95a5a6', '#e74c3c', '#9b59b6', '#1abc9c'
                 ]
             }]
         },

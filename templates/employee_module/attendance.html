@@ -1,107 +1,129 @@
-{% extends "employee_dashboard/base.html" %}
+{% extends "employee_module/base.html" %}
 {% block title %}My Attendance{% endblock %}
 
 {% block content %}
-
-<!-- ===== PAGE HEADER ===== -->
-<div class="mb-6">
-    <h2 class="text-2xl font-semibold">My Attendance</h2>
-    <p class="text-gray-500">
-        Mark your daily attendance and track status
-    </p>
+<!-- Page Header -->
+<div class="page-header mb-4">
+    <h2><i class="bi bi-calendar-check"></i> Attendance Records</h2>
 </div>
 
-<!-- ===== MARK ATTENDANCE FORM ===== -->
-<div class="bg-white p-6 rounded shadow mb-8">
-    <h3 class="text-lg font-semibold mb-4">Mark Attendance</h3>
-
-    <form method="post" enctype="multipart/form-data"
-          action="{% url 'mark_attendance' %}">
-        {% csrf_token %}
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-
-            <!-- Check-in -->
-            <div>
-                <label class="block text-sm text-gray-600">Check-in Time</label>
-                <input type="time" name="check_in" required
-                       class="w-full border rounded px-3 py-2">
+<!-- Mark Today's Attendance -->
+<div class="card mb-4">
+    <div class="card-header">
+        <i class="bi bi-plus-circle"></i> Mark Today's Attendance
+    </div>
+    <div class="card-body">
+        <form method="post" action="{% url 'employee:mark_attendance' %}">
+            {% csrf_token %}
+            <div class="row g-3 mb-3">
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Check-in Time <span class="text-danger">*</span></label>
+                    <input type="time" name="check_in_time" required class="form-control">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Check-out Time <span class="text-danger">*</span></label>
+                    <input type="time" name="check_out_time" required class="form-control">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Notes (Optional)</label>
+                    <input type="text" name="notes" class="form-control" placeholder="Any remarks...">
+                </div>
             </div>
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-check-circle"></i> Mark Attendance
+            </button>
+            <small class="text-muted d-block mt-2">Note: Your attendance will be verified by HR</small>
+        </form>
+    </div>
+</div>
 
-            <!-- Check-out -->
-            <div>
-                <label class="block text-sm text-gray-600">Check-out Time</label>
-                <input type="time" name="check_out" required
-                       class="w-full border rounded px-3 py-2">
+<!-- Attendance Statistics -->
+<div class="card mb-4">
+    <div class="card-header">
+        <i class="bi bi-bar-chart"></i> Attendance Statistics
+    </div>
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <div class="text-muted">Total Records</div>
+                <div class="h3 mb-0">{{ total_records }}</div>
             </div>
-
-            <!-- Proof -->
-            <div>
-                <label class="block text-sm text-gray-600">Upload Proof (optional)</label>
-                <input type="file" name="proof"
-                       class="w-full border rounded px-3 py-2">
+            <div class="col-md-4">
+                <div class="text-muted">Present Days</div>
+                <div class="h3 mb-0 text-success">{{ present_count }}</div>
             </div>
-
+            <div class="col-md-4">
+                <div class="text-muted">Attendance %</div>
+                <div class="h3 mb-0 text-primary">{{ attendance_percentage }}%</div>
+            </div>
         </div>
-
-        <button class="mt-4 bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600">
-            Submit Attendance
-        </button>
-    </form>
+    </div>
 </div>
 
-<!-- ===== ATTENDANCE HISTORY ===== -->
-<div class="bg-white p-6 rounded shadow">
-
-    <h3 class="text-lg font-semibold mb-4">Attendance History</h3>
-
-    <table class="w-full border-collapse">
-        <thead class="bg-gray-200">
-            <tr>
-                <th class="p-3 text-left">Date</th>
-                <th class="p-3 text-left">Check-in</th>
-                <th class="p-3 text-left">Check-out</th>
-                <th class="p-3 text-left">Status</th>
-                <th class="p-3 text-left">Proof</th>
-            </tr>
-        </thead>
-
-        <tbody>
-            {% for record in attendance_records %}
-            <tr class="border-t">
-                <td class="p-3">{{ record.date }}</td>
-                <td class="p-3">{{ record.check_in|default:"-" }}</td>
-                <td class="p-3">{{ record.check_out|default:"-" }}</td>
-                <td class="p-3 font-semibold">
-                    {% if record.status == "Approved" or record.status == "Present" %}
-                        <span class="text-green-600">{{ record.status }}</span>
-                    {% elif record.status == "Rejected" %}
-                        <span class="text-red-600">{{ record.status }}</span>
-                    {% else %}
-                        <span class="text-yellow-600">Pending</span>
-                    {% endif %}
-                </td>
-                <td class="p-3">
-                    {% if record.proof %}
-                        <a href="{{ record.proof.url }}"
-                           class="text-blue-500 underline" target="_blank">
-                            View
-                        </a>
-                    {% else %}
-                        -
-                    {% endif %}
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="5" class="p-5 text-center text-gray-500">
-                    No attendance records found
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
+<!-- Attendance Records Table -->
+<div class="card">
+    <div class="card-header">
+        <i class="bi bi-table"></i> Recent Attendance (Last 30 Days)
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Check In</th>
+                        <th>Check Out</th>
+                        <th>Working Hours</th>
+                        <th>Verification</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for attendance in attendance_records %}
+                    <tr>
+                        <td>{{ attendance.date }}</td>
+                        <td>
+                            {% if attendance.status == 'Present' %}
+                            <span class="badge bg-success">{{ attendance.status }}</span>
+                            {% elif attendance.status == 'Absent' %}
+                            <span class="badge bg-danger">{{ attendance.status }}</span>
+                            {% elif attendance.status == 'Half Day' %}
+                            <span class="badge bg-warning">{{ attendance.status }}</span>
+                            {% elif attendance.status == 'On Leave' %}
+                            <span class="badge bg-info">{{ attendance.status }}</span>
+                            {% else %}
+                            <span class="badge bg-secondary">{{ attendance.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ attendance.check_in_time|default:"-" }}</td>
+                        <td>{{ attendance.check_out_time|default:"-" }}</td>
+                        <td>
+                            {% if attendance.get_working_hours %}
+                                {{ attendance.get_working_hours }} hrs
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if attendance.is_verified %}
+                                <span class="badge bg-success"><i class="bi bi-check-circle"></i> Verified</span>
+                            {% else %}
+                                <span class="badge bg-warning"><i class="bi bi-hourglass-split"></i> Pending</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ attendance.notes|default:"-"|truncatewords:10 }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center text-muted">
+                            No attendance records found
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
-
 {% endblock %}

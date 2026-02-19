@@ -3,6 +3,12 @@
 
 Django-based Employee Management System for managing employees, HR staff, and admin operations.
 
+## Project Team
+This project was developed collaboratively by college students:
+- Admin Panel & Authentication - Team Member 1
+- HR Module & Reporting - Team Member 2  
+- Employee Portal - Team Member 3
+
 ## Features
 
 ### Admin Panel
@@ -24,16 +30,31 @@ Django-based Employee Management System for managing employees, HR staff, and ad
 - Export attendance data to CSV
 - Real-time statistics and charts
 
+### Employee Module ✅ (Recently Added)
+- Personal dashboard with task, leave, and attendance statistics
+- **Task Management:**
+  - Accept or reject assigned tasks with reason
+  - View and update task status (Pending → In Progress → Completed)
+  - Submit files when completing tasks (mandatory)
+  - View task submission files and rejection reasons
+- **Attendance Management:**
+  - Self-mark attendance with check-in/check-out times
+  - HR verification system (pending/verified status)
+  - View attendance records and statistics
+  - Calculate attendance percentage
+- **Leave Management:**
+  - Apply for leaves with overlap detection
+  - View leave balance by type (Sick, Casual, Earned)
+  - Track leave application status
+- Modern responsive UI with Tailwind CSS
+
 ### Authentication 
 - Username and password login
 - New employees get temporary passwords via email
 - OTP verification when changing passwords (6-digit code, expires in 5 minutes)
 - Account locks after 5 failed login attempts
 - Email notifications for important events
-- Different roles: Admin, HR, Employee
-
-### TODO
-- Employee Module - for employees to view their info, apply leave, and view assigned tasks
+- Role-based redirections: Admin → Admin Panel, HR → HR Dashboard, Employee → Employee Portal
 
 ## Requirements
 
