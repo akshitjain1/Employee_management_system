@@ -1,0 +1,107 @@
+{% extends "employee_dashboard/base.html" %}
+{% block title %}My Attendance{% endblock %}
+
+{% block content %}
+
+<!-- ===== PAGE HEADER ===== -->
+<div class="mb-6">
+    <h2 class="text-2xl font-semibold">My Attendance</h2>
+    <p class="text-gray-500">
+        Mark your daily attendance and track status
+    </p>
+</div>
+
+<!-- ===== MARK ATTENDANCE FORM ===== -->
+<div class="bg-white p-6 rounded shadow mb-8">
+    <h3 class="text-lg font-semibold mb-4">Mark Attendance</h3>
+
+    <form method="post" enctype="multipart/form-data"
+          action="{% url 'mark_attendance' %}">
+        {% csrf_token %}
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+            <!-- Check-in -->
+            <div>
+                <label class="block text-sm text-gray-600">Check-in Time</label>
+                <input type="time" name="check_in" required
+                       class="w-full border rounded px-3 py-2">
+            </div>
+
+            <!-- Check-out -->
+            <div>
+                <label class="block text-sm text-gray-600">Check-out Time</label>
+                <input type="time" name="check_out" required
+                       class="w-full border rounded px-3 py-2">
+            </div>
+
+            <!-- Proof -->
+            <div>
+                <label class="block text-sm text-gray-600">Upload Proof (optional)</label>
+                <input type="file" name="proof"
+                       class="w-full border rounded px-3 py-2">
+            </div>
+
+        </div>
+
+        <button class="mt-4 bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600">
+            Submit Attendance
+        </button>
+    </form>
+</div>
+
+<!-- ===== ATTENDANCE HISTORY ===== -->
+<div class="bg-white p-6 rounded shadow">
+
+    <h3 class="text-lg font-semibold mb-4">Attendance History</h3>
+
+    <table class="w-full border-collapse">
+        <thead class="bg-gray-200">
+            <tr>
+                <th class="p-3 text-left">Date</th>
+                <th class="p-3 text-left">Check-in</th>
+                <th class="p-3 text-left">Check-out</th>
+                <th class="p-3 text-left">Status</th>
+                <th class="p-3 text-left">Proof</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for record in attendance_records %}
+            <tr class="border-t">
+                <td class="p-3">{{ record.date }}</td>
+                <td class="p-3">{{ record.check_in|default:"-" }}</td>
+                <td class="p-3">{{ record.check_out|default:"-" }}</td>
+                <td class="p-3 font-semibold">
+                    {% if record.status == "Approved" or record.status == "Present" %}
+                        <span class="text-green-600">{{ record.status }}</span>
+                    {% elif record.status == "Rejected" %}
+                        <span class="text-red-600">{{ record.status }}</span>
+                    {% else %}
+                        <span class="text-yellow-600">Pending</span>
+                    {% endif %}
+                </td>
+                <td class="p-3">
+                    {% if record.proof %}
+                        <a href="{{ record.proof.url }}"
+                           class="text-blue-500 underline" target="_blank">
+                            View
+                        </a>
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="p-5 text-center text-gray-500">
+                    No attendance records found
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+{% endblock %}
