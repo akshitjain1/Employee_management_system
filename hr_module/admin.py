@@ -1,6 +1,7 @@
 from django.contrib import admin
 from .models import Attendance, Leave, Task, LeaveBalance
 
+# Register your models here.
 @admin.register(Attendance)
 class AttendanceAdmin(admin.ModelAdmin):
     list_display = ['user', 'date', 'status', 'check_in_time', 'check_out_time', 'marked_by']
