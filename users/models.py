@@ -42,6 +42,15 @@ class CustomUser(AbstractUser):
     must_change_password = models.BooleanField(default=False)
     temp_password = models.CharField(max_length=20, blank=True, null=True)
     
+    # Profile fields
+    nickname = models.CharField(max_length=50, blank=True, null=True)
+    profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
+    bio = models.TextField(max_length=500, blank=True, null=True)
+    address = models.TextField(blank=True, null=True)
+    date_of_birth = models.DateField(blank=True, null=True)
+    emergency_contact_name = models.CharField(max_length=100, blank=True, null=True)
+    emergency_contact_phone = models.CharField(max_length=15, blank=True, null=True)
+    
     objects = CustomUserManager()
     
     USERNAME_FIELD = 'username'

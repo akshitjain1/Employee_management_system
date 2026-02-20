@@ -322,7 +322,6 @@ def mark_attendance(request):
     if request.method == 'POST':
         today = timezone.now().date()
         check_in = request.POST.get('check_in_time')
-        check_out = request.POST.get('check_out_time')
         notes = request.POST.get('notes', '')
         
         # Check if attendance already marked for today
@@ -331,9 +330,9 @@ def mark_attendance(request):
             messages.warning(request, "Attendance already marked for today")
             return redirect('employee:attendance')
         
-        # Validate check-in and check-out times
-        if not check_in or not check_out:
-            messages.error(request, "Please provide both check-in and check-out times")
+        # Validate check-in time
+        if not check_in:
+            messages.error(request, "Please provide your check-in time")
             return redirect('employee:attendance')
         
         # Create attendance record (pending HR verification)
@@ -342,7 +341,7 @@ def mark_attendance(request):
             date=today,
             status='Present',
             check_in_time=check_in,
-            check_out_time=check_out,
+            check_out_time=None,
             notes=notes,
             marked_by=request.user,
             is_verified=False  # Pending HR verification
@@ -352,3 +351,4 @@ def mark_attendance(request):
         return redirect('employee:attendance')
     
     return redirect('employee:attendance')
+

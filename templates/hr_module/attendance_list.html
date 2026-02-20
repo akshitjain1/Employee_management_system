@@ -9,13 +9,13 @@
         <h2><i class="bi bi-calendar-check"></i> Attendance List</h2>
     </div>
     <div class="col-md-6 text-end">
-        <a href="{% url 'mark_attendance' %}" class="btn btn-primary">
+        <a href="{% url 'hr_module:mark_attendance' %}" class="btn btn-primary">
             <i class="bi bi-plus-circle"></i> Mark Single Attendance
         </a>
-        <a href="{% url 'bulk_mark_attendance' %}" class="btn btn-success">
+        <a href="{% url 'hr_module:bulk_mark_attendance' %}" class="btn btn-success">
             <i class="bi bi-list-check"></i> Bulk Mark Attendance
         </a>
-        <a href="{% url 'export_attendance_csv' %}?date={{ date_filter }}" class="btn btn-info">
+        <a href="{% url 'hr_module:export_attendance_csv' %}?date={{ date_filter }}" class="btn btn-info">
             <i class="bi bi-download"></i> Export CSV
         </a>
     </div>
@@ -79,6 +79,7 @@
                         <th>Check In</th>
                         <th>Check Out</th>
                         <th>Working Hours</th>
+                        <th>Verified</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -106,7 +107,19 @@
                         <td>{{ att.check_out_time|default:"N/A" }}</td>
                         <td>{{ att.get_working_hours }} hrs</td>
                         <td>
-                            <a href="{% url 'edit_attendance' att.id %}" class="btn btn-sm btn-warning">
+                            {% if att.is_verified %}
+                            <span class="badge bg-success"><i class="bi bi-check-circle"></i> Verified</span>
+                            {% else %}
+                            <span class="badge bg-warning text-dark"><i class="bi bi-hourglass-split"></i> Pending</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if not att.is_verified and att.marked_by.role == 'Employee' %}
+                            <a href="{% url 'hr_module:verify_attendance' att.id %}" class="btn btn-sm btn-success" title="Verify">
+                                <i class="bi bi-check-lg"></i>
+                            </a>
+                            {% endif %}
+                            <a href="{% url 'hr_module:edit_attendance' att.id %}" class="btn btn-sm btn-warning">
                                 <i class="bi bi-pencil"></i>
                             </a>
                         </td>

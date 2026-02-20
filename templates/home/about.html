@@ -1,0 +1,195 @@
+{% extends 'home/base.html' %}
+{% load static %}
+
+{% block title %}About Us - Invo Logic Software Services{% endblock %}
+
+{% block extra_styles %}
+<style>
+    :root {
+        --primary-dark: #001f2e;
+        --accent-blue: #00bcd4;
+        --glass-bg: rgba(255, 255, 255, 0.05);
+        --text-muted: #64748b;
+    }
+
+    /* Modern Hero Section */
+    .about-hero {
+        background: linear-gradient(135deg, #001f2e 0%, #003d5c 100%);
+        padding: 80px 2rem 100px;
+        text-align: center;
+        color: white;
+        position: relative;
+    }
+
+    .about-hero h1 {
+        font-size: 3.5rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        background: linear-gradient(to right, #fff, #00bcd4);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    /* Stats Grid - The "Counter" Section */
+    .stats-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
+        max-width: 1200px;
+        margin: -60px auto 60px;
+        padding: 0 2rem;
+        position: relative;
+        z-index: 5;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 2.5rem 1.5rem;
+        border-radius: 20px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        transition: transform 0.3s ease;
+        border: 1px solid rgba(0, 188, 212, 0.1);
+    }
+
+    .stat-card:hover {
+        transform: translateY(-10px);
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--primary-dark);
+        display: block;
+    }
+
+    .stat-label {
+        color: var(--accent-blue);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-top: 0.5rem;
+    }
+
+    /* Content Styling */
+    .content-section {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 60px 2rem;
+    }
+
+    .section-tag {
+        color: var(--accent-blue);
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 2px;
+        display: block;
+        margin-bottom: 1rem;
+    }
+
+    .content-section h2 {
+        font-size: 2.2rem;
+        color: var(--primary-dark);
+        margin-bottom: 1.5rem;
+    }
+
+    .content-section p {
+        font-size: 1.1rem;
+        line-height: 1.8;
+        color: #475569;
+        margin-bottom: 2rem;
+    }
+
+    /* Vision & Mission Split */
+    .vision-mission-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+        margin-top: 4rem;
+    }
+
+    .vm-card {
+        padding: 2rem;
+        border-left: 4px solid var(--accent-blue);
+        background: #f8fafc;
+        border-radius: 0 15px 15px 0;
+    }
+
+    .vm-card h3 {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--primary-dark);
+        margin-bottom: 0.75rem;
+    }
+
+    .vm-card p {
+        margin-bottom: 0;
+        color: #475569;
+        line-height: 1.7;
+    }
+
+    .content-section h2 {
+        font-size: 2rem;
+        color: var(--primary-dark);
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+    }
+
+    @media (max-width: 768px) {
+        .vision-mission-grid { grid-template-columns: 1fr; }
+        .about-hero h1 { font-size: 2.5rem; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="about-hero">
+    <div class="container">
+        <h1>Our Story</h1>
+        <p style="max-width: 700px; margin: 0 auto; opacity: 0.9;">
+            Invo Logic is a leading software development company dedicated to transforming ideas into reality through cutting-edge technology.
+        </p>
+    </div>
+</section>
+
+<div class="stats-container">
+    <div class="stat-card">
+        <span class="stat-number">200+</span>
+        <span class="stat-label">Projects Done</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-number">150+</span>
+        <span class="stat-label">Happy Clients</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-number">50+</span>
+        <span class="stat-label">Experts</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-number">8+</span>
+        <span class="stat-label">Years of Win</span>
+    </div>
+</div>
+
+<section class="content-section">
+    <span class="section-tag">Who we are</span>
+    <h2>Driving Innovation for the Modern Enterprise</h2>
+    <p>
+        Since our establishment, we have been helping businesses transform their ideas into reality through custom software development, web applications, mobile apps, and comprehensive IT consulting services. Our team of experienced developers, designers, and consultants work collaboratively to create solutions that not only meet but exceed our clients' expectations.
+    </p>
+
+    <div class="vision-mission-grid">
+        <div class="vm-card">
+            <h3>Our Mission</h3>
+            <p>To empower businesses with innovative software solutions that drive growth, improve efficiency, and create lasting value.</p>
+        </div>
+        <div class="vm-card">
+            <h3>Our Vision</h3>
+            <p>To be recognized globally as a leader in software development, known for our innovation, quality, and customer-centric approach.</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

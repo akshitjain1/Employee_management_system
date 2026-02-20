@@ -81,9 +81,20 @@
                         </td>
                     </tr>
                     {% endif %}
+                    {% if task.attachment_file %}
+                    <tr>
+                        <th>Task Attachment:</th>
+                        <td>
+                            <a href="{{ task.attachment_file.url }}" class="btn btn-sm btn-info" download>
+                                <i class="bi bi-download"></i> Download Attachment
+                            </a>
+                            <br><small class="text-muted">{{ task.attachment_file.name }}</small>
+                        </td>
+                    </tr>
+                    {% endif %}
                     {% if task.submission_file %}
                     <tr>
-                        <th>Submission File:</th>
+                        <th>Employee Submission:</th>
                         <td>
                             <a href="{{ task.submission_file.url }}" class="btn btn-sm btn-success" download>
                                 <i class="bi bi-download"></i> Download Submission File
@@ -136,8 +147,8 @@
 
                     <div class="d-grid gap-2">
                         <button type="submit" class="btn btn-primary">Update Status</button>
-                        <a href="{% url 'task_list' %}" class="btn btn-secondary">Back to Tasks</a>
-                        <a href="{% url 'delete_task' task.id %}" class="btn btn-danger">
+                        <a href="{% url 'hr_module:task_list' %}" class="btn btn-secondary">Back to Tasks</a>
+                        <a href="{% url 'hr_module:delete_task' task.id %}" class="btn btn-danger">
                             <i class="bi bi-trash"></i> Delete Task
                         </a>
                     </div>

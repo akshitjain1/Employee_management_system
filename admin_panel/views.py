@@ -72,9 +72,9 @@ def user_login(request):
         if request.user.must_change_password:
             return redirect('change_password_required')
         if request.user.role == 'Admin':
-            return redirect('admin_dashboard')
+            return redirect('admin_panel:admin_dashboard')
         elif request.user.role == 'HR':
-            return redirect('hr_dashboard')
+            return redirect('hr_module:hr_dashboard')
         else:
             return redirect('employee:dashboard')  # updated to use employee_module
     
@@ -115,9 +115,9 @@ def user_login(request):
                     return redirect('change_password_required')
                 
                 if user.role == 'Admin':
-                    return redirect('admin_dashboard')
+                    return redirect('admin_panel:admin_dashboard')
                 elif user.role == 'HR':
-                    return redirect('hr_dashboard')
+                    return redirect('hr_module:hr_dashboard')
                 else:
                     return redirect('employee:dashboard')
             else:
@@ -150,9 +150,9 @@ def user_login(request):
 def change_password_required(request):
     if not request.user.must_change_password:
         if request.user.role == 'Admin':
-            return redirect('admin_dashboard')
+            return redirect('admin_panel:admin_dashboard')
         elif request.user.role == 'HR':
-            return redirect('hr_dashboard')
+            return redirect('hr_module:hr_dashboard')
         else:
             return redirect('employee:dashboard')
     
@@ -329,7 +329,7 @@ EMS Admin Team"""
             )
             
             messages.success(request, f'Employee created! Username: {username} | Temporary password sent to {user.email}')
-            return redirect('employee_list')
+            return redirect('admin_panel:employee_list')
     else:
         form = EmployeeCreationForm()
     
@@ -418,7 +418,7 @@ def edit_employee(request, user_id):
             )
             
             messages.success(request, 'Employee updated successfully!')
-            return redirect('employee_detail', user_id=emp.id)
+            return redirect('admin_panel:employee_detail', user_id=emp.id)
     else:
         form = EmployeeEditForm(instance=emp)
     
@@ -444,7 +444,7 @@ def toggle_employee_status(request, user_id):
     )
     
     messages.success(request, f'Employee {status} successfully!')
-    return redirect('employee_list')
+    return redirect('admin_panel:employee_list')
 
 @login_required
 def unlock_account(request, user_id):
@@ -465,7 +465,7 @@ def unlock_account(request, user_id):
     )
     
     messages.success(request, 'Account unlocked successfully!')
-    return redirect('employee_detail', user_id=emp.id)
+    return redirect('admin_panel:employee_detail', user_id=emp.id)
 
 @login_required
 def delete_employee(request, user_id):
@@ -477,7 +477,7 @@ def delete_employee(request, user_id):
     
     if emp.role == 'Admin':
         messages.error(request, 'Cannot delete admin users!')
-        return redirect('employee_list')
+        return redirect('admin_panel:employee_list')
     
     if request.method == 'POST':
         emp_email = emp.email
@@ -492,7 +492,7 @@ def delete_employee(request, user_id):
         
         emp.delete()
         messages.success(request, f'Employee {emp_name} deleted successfully!')
-        return redirect('employee_list')
+        return redirect('admin_panel:employee_list')
     
     return render(request, 'admin_panel/delete_employee.html', {'employee': emp})
 
@@ -550,7 +550,7 @@ EMS Admin Team"""
     )
     
     messages.success(request, f'Password reset! Temporary password sent to {emp.email}')
-    return redirect('employee_detail', user_id=emp.id)
+    return redirect('admin_panel:employee_detail', user_id=emp.id)
 
 @login_required
 def bulk_action(request):
@@ -686,7 +686,7 @@ def send_notification(request, user_id):
             )
             
             messages.success(request, 'Notification sent successfully!')
-            return redirect('employee_detail', user_id=emp.id)
+            return redirect('admin_panel:employee_detail', user_id=emp.id)
         else:
             messages.error(request, 'Subject and message are required!')
     
@@ -720,3 +720,38 @@ def hr_dashboard(request):
     return render(request, 'hr_module/dashboard.html')
 
 # Employee dashboard is now in employee_module app
+
+@login_required
+def admin_profile(request):
+    """Admin profile view and edit"""
+    if request.user.role != 'Admin':
+        messages.error(request, 'Unauthorized access.')
+        return redirect('login')
+    
+    from users.forms import ProfileEditForm
+    
+    if request.method == 'POST':
+        form = ProfileEditForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            
+            # Log the action
+            ip = get_client_ip(request)
+            AuditLog.objects.create(
+                user=request.user,
+                action='Profile Updated',
+                details=f'Admin {request.user.username} updated their profile',
+                ip_address=ip
+            )
+            
+            messages.success(request, 'Profile updated successfully!')
+            return redirect('admin_panel:admin_profile')
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        form = ProfileEditForm(instance=request.user)
+    
+    return render(request, 'admin_panel/profile.html', {
+        'form': form,
+        'user': request.user
+    })

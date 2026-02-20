@@ -22,7 +22,7 @@ from admin_panel.views import user_login, user_logout, change_password_required
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', user_login, name='login'),
+    path('', include('home.urls')),
     path('login/', user_login, name='login'),
     path('logout/', user_logout, name='logout'),
     path('change-password/', change_password_required, name='change_password_required'),

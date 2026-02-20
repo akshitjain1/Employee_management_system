@@ -73,6 +73,14 @@ def hr_dashboard(request):
     # Recent tasks
     recent_tasks = Task.objects.filter(assigned_by=request.user).order_by('-created_at')[:5]
     
+    # Pending attendance verifications (employee self-marked, awaiting HR)
+    pending_attendance = Attendance.objects.filter(
+        is_verified=False, marked_by__role='Employee'
+    ).select_related('user', 'marked_by').order_by('-date')[:10]
+    pending_attendance_count = Attendance.objects.filter(
+        is_verified=False, marked_by__role='Employee'
+    ).count()
+    
     # Department wise attendance (for chart)
     departments = User.objects.filter(role='Employee', is_active=True).values('department').annotate(count=Count('id'))
     dept_labels = [d['department'] or 'Not Assigned' for d in departments]
@@ -89,6 +97,8 @@ def hr_dashboard(request):
         'overdue_tasks': overdue_tasks,
         'recent_leaves': recent_leaves,
         'recent_tasks': recent_tasks,
+        'pending_attendance': pending_attendance,
+        'pending_attendance_count': pending_attendance_count,
         'dept_labels': json.dumps(dept_labels),
         'dept_counts': json.dumps(dept_counts),
     }
@@ -163,7 +173,7 @@ def mark_attendance(request):
                       request)
             
             messages.success(request, 'Attendance marked successfully.')
-            return redirect('attendance_list')
+            return redirect('hr_module:attendance_list')
     else:
         form = AttendanceForm()
     
@@ -189,12 +199,31 @@ def edit_attendance(request, attendance_id):
                       request)
             
             messages.success(request, 'Attendance updated successfully.')
-            return redirect('attendance_list')
+            return redirect('hr_module:attendance_list')
     else:
         form = AttendanceForm(instance=attendance)
     
     context = {'form': form, 'attendance': attendance}
     return render(request, 'hr_module/edit_attendance.html', context)
+
+# Verify attendance (employee self-marked)
+@login_required
+def verify_attendance(request, attendance_id):
+    if request.user.role != 'HR':
+        messages.error(request, 'You do not have permission to verify attendance.')
+        return redirect('login')
+    
+    attendance = get_object_or_404(Attendance, id=attendance_id)
+    attendance.is_verified = True
+    attendance.verified_by = request.user
+    attendance.save()
+    
+    log_action(request.user, 'Verify Attendance',
+               f"Verified attendance for {attendance.user.username} on {attendance.date}",
+               request)
+    
+    messages.success(request, f"Attendance verified for {attendance.user.get_full_name() or attendance.user.username}.")
+    return redirect(request.META.get('HTTP_REFERER', 'hr_module:attendance_list'))
 
 # Bulk mark attendance
 @login_required
@@ -231,7 +260,7 @@ def bulk_mark_attendance(request):
                   request)
         
         messages.success(request, f'Attendance marked for {marked_count} employees.')
-        return redirect('attendance_list')
+        return redirect('hr_module:attendance_list')
     
     else:
         form = BulkAttendanceForm()
@@ -333,7 +362,7 @@ def leave_detail(request, leave_id):
                       request)
             
             messages.success(request, f'Leave request {leave.status.lower()} successfully.')
-            return redirect('leave_requests')
+            return redirect('hr_module:leave_requests')
     else:
         form = LeaveApprovalForm(instance=leave)
     
@@ -362,7 +391,7 @@ def apply_leave(request):
                       request)
             
             messages.success(request, 'Leave application submitted successfully.')
-            return redirect('leave_requests')
+            return redirect('hr_module:leave_requests')
     else:
         form = LeaveForm()
     
@@ -414,7 +443,7 @@ def create_task(request):
         return redirect('login')
     
     if request.method == 'POST':
-        form = TaskForm(request.POST)
+        form = TaskForm(request.POST, request.FILES)
         if form.is_valid():
             task = form.save(commit=False)
             task.assigned_by = request.user
@@ -425,7 +454,7 @@ def create_task(request):
                       request)
             
             messages.success(request, 'Task created successfully.')
-            return redirect('task_list')
+            return redirect('hr_module:task_list')
     else:
         form = TaskForm()
     
@@ -454,7 +483,7 @@ def task_detail(request, task_id):
                       request)
             
             messages.success(request, 'Task updated successfully.')
-            return redirect('task_list')
+            return redirect('hr_module:task_list')
     else:
         form = TaskStatusForm(instance=task)
     
@@ -483,7 +512,7 @@ def delete_task(request, task_id):
                   request)
         
         messages.success(request, 'Task deleted successfully.')
-        return redirect('task_list')
+        return redirect('hr_module:task_list')
     
     context = {'task': task}
     return render(request, 'hr_module/delete_task.html', context)
@@ -565,3 +594,32 @@ def export_attendance_csv(request):
     log_action(request.user, 'Export Attendance', f"Exported attendance for {date_filter}", request)
     
     return response
+
+@login_required
+def hr_profile(request):
+    """HR profile view and edit"""
+    if request.user.role != 'HR':
+        messages.error(request, 'Unauthorized access.')
+        return redirect('login')
+    
+    from users.forms import ProfileEditForm
+    
+    if request.method == 'POST':
+        form = ProfileEditForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            
+            # Log the action
+            log_action(request.user, 'Profile Updated', f'HR {request.user.username} updated their profile', request)
+            
+            messages.success(request, 'Profile updated successfully!')
+            return redirect('hr_module:hr_profile')
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        form = ProfileEditForm(instance=request.user)
+    
+    return render(request, 'hr_module/profile.html', {
+        'form': form,
+        'user': request.user
+    })

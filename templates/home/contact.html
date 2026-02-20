@@ -1,0 +1,357 @@
+{% extends 'home/base.html' %}
+{% load static %}
+
+{% block title %}Contact Us - Invo Logic Software Services{% endblock %}
+
+{% block extra_styles %}
+<style>
+    :root {
+        --primary-dark: #001f2e;
+        --accent-blue: #00bcd4;
+        --glass-bg: rgba(255, 255, 255, 0.05);
+        --text-muted: #64748b;
+    }
+
+    /* Modern Hero Section */
+    .contact-hero {
+        background: linear-gradient(135deg, #001f2e 0%, #003d5c 100%);
+        padding: 80px 2rem 100px;
+        text-align: center;
+        color: white;
+        position: relative;
+    }
+
+    .contact-hero h1 {
+        font-size: 3.5rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        background: linear-gradient(to right, #fff, #00bcd4);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .contact-hero p {
+        max-width: 700px;
+        margin: 0 auto;
+        opacity: 0.9;
+        font-size: 1.1rem;
+    }
+    
+    /* Content Styling */
+    .contact-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 60px 2rem;
+    }
+    
+    .section-tag {
+        color: var(--accent-blue);
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 2px;
+        display: block;
+        margin-bottom: 1rem;
+    }
+    
+    .contact-content h2 {
+        font-size: 2.2rem;
+        color: var(--primary-dark);
+        margin-bottom: 1.5rem;
+    }
+
+    .contact-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+        margin-top: 3rem;
+    }
+
+    /* Info Cards */
+    .info-item {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        border: 1px solid rgba(0, 188, 212, 0.1);
+        transition: transform 0.3s ease;
+        margin-bottom: 1.25rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .info-item:hover {
+        transform: translateY(-5px);
+    }
+
+    .info-icon {
+        width: 48px;
+        height: 48px;
+        min-width: 48px;
+        background: linear-gradient(135deg, var(--accent-blue), #0097a7);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.2rem;
+    }
+
+    .info-details h3 {
+        color: var(--primary-dark);
+        margin-bottom: 0.5rem;
+        font-size: 1.2rem;
+    }
+
+    .info-details p {
+        color: #475569;
+        line-height: 1.6;
+    }
+
+    /* Contact Form */
+    .contact-form {
+        background: white;
+        padding: 2.5rem;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        border: 1px solid rgba(0, 188, 212, 0.1);
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: var(--primary-dark);
+        font-weight: 600;
+        font-size: 0.95rem;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: #f8fafc;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: var(--accent-blue);
+        background: white;
+    }
+
+    .form-group textarea {
+        resize: vertical;
+        min-height: 120px;
+    }
+
+    .submit-btn {
+        background: linear-gradient(135deg, var(--accent-blue), #0097a7);
+        color: white;
+        padding: 14px 32px;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        width: 100%;
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 188, 212, 0.3);
+    }
+
+    /* Social Links */
+    .social-links {
+        display: flex;
+        gap: 12px;
+        margin-top: 12px;
+    }
+
+    .social-link {
+        width: 45px;
+        height: 45px;
+        background: linear-gradient(135deg, var(--accent-blue), #0097a7);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        text-decoration: none;
+        color: white;
+        transition: all 0.3s ease;
+    }
+
+    .social-link:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0, 188, 212, 0.3);
+    }
+
+    /* Map Section */
+    .map-section {
+        margin-top: 4rem;
+        text-align: center;
+    }
+
+    .map-section h2 {
+        font-size: 2.2rem;
+        color: var(--primary-dark);
+        margin-bottom: 2rem;
+    }
+
+    .map-container {
+        width: 100%;
+        height: 400px;
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        color: var(--text-muted);
+        border: 1px solid rgba(0, 188, 212, 0.1);
+    }
+
+    @media (max-width: 768px) {
+        .contact-hero h1 { font-size: 2.5rem; }
+        .contact-grid { grid-template-columns: 1fr; }
+        .contact-content h2 { font-size: 1.8rem; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Contact Hero -->
+<section class="contact-hero">
+    <div class="container">
+        <h1>Get In Touch</h1>
+        <p>We'd love to hear from you. Let's start a conversation!</p>
+    </div>
+</section>
+<!-- Contact Content -->
+<section class="contact-content">
+    <div class="contact-grid">
+        <!-- Contact Information -->
+        <div class="contact-info">
+            <span class="section-tag">Connect With Us</span>
+            <h2>Contact Information</h2>
+            
+            <div class="info-item">
+                <div class="info-icon"><i class="fas fa-map-marker-alt"></i></div>
+                <div class="info-details">
+                    <h3>Office Address</h3>
+                    <p>
+                        Tech Park, 4th Floor<br>
+                        Sector 62, Noida<br>
+                        Uttar Pradesh - 201301<br>
+                        India
+                    </p>
+                </div>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-icon"><i class="fas fa-phone"></i></div>
+                <div class="info-details">
+                    <h3>Phone</h3>
+                    <p>
+                        +91 120 456 7890<br>
+                        +91 120 456 7891 (Support)
+                    </p>
+                </div>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-icon"><i class="fas fa-envelope"></i></div>
+                <div class="info-details">
+                    <h3>Email</h3>
+                    <p>
+                        info@invologic.com<br>
+                        support@invologic.com<br>
+                        careers@invologic.com
+                    </p>
+                </div>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-icon"><i class="fas fa-clock"></i></div>
+                <div class="info-details">
+                    <h3>Business Hours</h3>
+                    <p>
+                        Monday - Friday: 9:00 AM - 6:00 PM<br>
+                        Saturday: 10:00 AM - 4:00 PM<br>
+                        Sunday: Closed
+                    </p>
+                </div>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-icon"><i class="fas fa-share-alt"></i></div>
+                <div class="info-details">
+                    <h3>Follow Us</h3>
+                    <div class="social-links">
+                        <a href="#" class="social-link" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="social-link" title="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-link" title="Instagram"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Contact Form -->
+        <div class="contact-form">
+            <span class="section-tag">Get In Touch</span>
+            <h2>Send Us a Message</h2>
+            <form method="post" action="#">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="name">Full Name *</label>
+                    <input type="text" id="name" name="name" required placeholder="Enter your full name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email Address *</label>
+                    <input type="email" id="email" name="email" required placeholder="Enter your email">
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" name="phone" placeholder="Enter your phone number">
+                </div>
+                
+                <div class="form-group">
+                    <label for="subject">Subject *</label>
+                    <input type="text" id="subject" name="subject" required placeholder="What is this regarding?">
+                </div>
+                
+                <div class="form-group">
+                    <label for="message">Message *</label>
+                    <textarea id="message" name="message" required placeholder="Write your message here..."></textarea>
+                </div>
+                
+                <button type="submit" class="submit-btn">Send Message</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Map Section -->
+    <div class="map-section">
+        <span class="section-tag">Location</span>
+        <h2>Find Us Here</h2>
+        <div class="map-container">
+            <p>📍 Tech Park, Sector 62, Noida, Uttar Pradesh</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

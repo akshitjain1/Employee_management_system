@@ -8,7 +8,7 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h4 class="mb-0"><i class="bi bi-pencil-fill"></i> Edit Employee</h4>
-                <a href="{% url 'employee_detail' employee.id %}" class="btn btn-secondary btn-sm">
+                <a href="{% url 'admin_panel:employee_detail' employee.id %}" class="btn btn-secondary btn-sm">
                     <i class="bi bi-arrow-left"></i> Back
                 </a>
             </div>
@@ -85,7 +85,7 @@
                     
                     <div class="d-flex gap-2">
                         <button type="submit" class="btn btn-primary">Update Employee</button>
-                        <a href="{% url 'employee_detail' employee.id %}" class="btn btn-secondary">Cancel</a>
+                        <a href="{% url 'admin_panel:employee_detail' employee.id %}" class="btn btn-secondary">Cancel</a>
                     </div>
                 </form>
             </div>

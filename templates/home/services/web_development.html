@@ -1,0 +1,249 @@
+{% extends 'home/base.html' %}
+{% load static %}
+
+{% block title %}Web Development - Invo Logic Software Services Pvt Ltd{% endblock %}
+
+{% block extra_styles %}
+<style>
+    :root {
+        --primary-dark: #001f2e;
+        --accent-blue: #00bcd4;
+        --glass-bg: rgba(255, 255, 255, 0.05);
+        --text-muted: #64748b;
+    }
+
+    .service-hero {
+        background: linear-gradient(135deg, #001f2e 0%, #003d5c 100%);
+        padding: 80px 2rem 100px;
+        text-align: center;
+        color: white;
+        position: relative;
+    }
+    
+    .service-hero .container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    .service-hero h1 {
+        font-size: 3.5rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        background: linear-gradient(to right, #fff, #00bcd4);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .service-hero p {
+        font-size: 1.3rem;
+        max-width: 700px;
+        margin: 0 auto;
+        opacity: 0.9;
+        line-height: 1.6;
+    }
+    
+    .service-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 60px 2rem;
+    }
+    
+    .section-tag {
+        color: var(--accent-blue);
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 2px;
+        display: block;
+        margin-bottom: 1rem;
+    }
+    
+    .service-section {
+        margin-bottom: 60px;
+    }
+    
+    .service-section h2 {
+        font-size: 2.2rem;
+        color: var(--primary-dark);
+        margin-bottom: 1.5rem;
+    }
+    
+    .service-section p {
+        font-size: 1.1rem;
+        line-height: 1.8;
+        color: #475569;
+        margin-bottom: 1rem;
+    }
+    
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2rem;
+        margin-top: 2.5rem;
+    }
+    
+    .feature-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 20px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        border: 1px solid rgba(0, 188, 212, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+    }
+    
+    .feature-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+    
+    .feature-card h3 {
+        color: var(--primary-dark);
+        margin-bottom: 0.75rem;
+        font-size: 1.3rem;
+    }
+    
+    .feature-card p {
+        color: #475569;
+        line-height: 1.6;
+        font-size: 1rem;
+    }
+    
+    .cta-section {
+        background: linear-gradient(135deg, var(--primary-dark), var(--accent-blue));
+        padding: 3rem 2.5rem;
+        border-radius: 20px;
+        text-align: center;
+        color: white;
+        margin-top: 4rem;
+    }
+    
+    .cta-section h2 {
+        font-size: 2.2rem;
+        margin-bottom: 1rem;
+        font-weight: 700;
+    }
+    
+    .cta-section p {
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+        opacity: 0.9;
+    }
+    
+    .cta-btn {
+        display: inline-block;
+        background: white;
+        color: var(--primary-dark);
+        padding: 14px 32px;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .cta-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(255,255,255,0.3);
+    }
+    
+    @media (max-width: 768px) {
+        .service-hero h1 { font-size: 2.5rem; }
+        .service-hero p { font-size: 1.1rem; }
+        .service-section h2 { font-size: 1.8rem; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Service Hero -->
+<section class="service-hero">
+    <div class="container">
+        <h1>Web Development</h1>
+        <p>Create Stunning, Fast, and Secure Web Solutions</p>
+    </div>
+</section>
+
+<!-- Service Content -->
+<section class="service-content">
+    <div class="service-section">
+        <span class="section-tag">Our Expertise</span>
+        <h2>Professional Web Development Services</h2>
+        <p>
+            In today's digital age, your website is often the first point of contact with potential customers. At Invo Logic, 
+            we craft exceptional web experiences that captivate users and drive conversions. Our web development services 
+            combine innovative design with powerful functionality to create websites that truly represent your brand.
+        </p>
+        <p>
+            From simple landing pages to complex web applications, we have the expertise to bring your vision to life. 
+            Our developers use modern frameworks and technologies to ensure your website is fast, responsive, secure, 
+            and optimized for search engines. We follow industry best practices and web standards to deliver solutions 
+            that work flawlessly across all browsers and devices.
+        </p>
+    </div>
+    
+    <div class="service-section">
+        <span class="section-tag">Solutions We Offer</span>
+        <h2>What We Offer</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🎨</div>
+                <h3>Custom Website Development</h3>
+                <p>Tailor-made websites designed specifically for your business goals and target audience.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Responsive Design</h3>
+                <p>Mobile-first approach ensuring perfect display on all devices from desktops to smartphones.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🚀</div>
+                <h3>Progressive Web Apps</h3>
+                <p>Modern web applications that work offline and provide app-like experiences.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔍</div>
+                <h3>SEO Optimization</h3>
+                <p>Built-in SEO best practices to help your website rank higher in search results.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⚙️</div>
+                <h3>CMS Integration</h3>
+                <p>Easy content management with popular CMS platforms like WordPress, Drupal, or custom solutions.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🛡️</div>
+                <h3>Security & Performance</h3>
+                <p>Robust security measures and optimized performance for fast loading times.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="service-section">
+        <span class="section-tag">Why Us</span>
+        <h2>Our Technology Stack</h2>
+        <p>
+            We leverage cutting-edge technologies to build modern web solutions. Our expertise includes HTML5, CSS3, JavaScript, 
+            React, Angular, Vue.js, Node.js, Python (Django/Flask), PHP (Laravel), Ruby on Rails, and more. We choose the 
+            right technology stack based on your specific requirements, ensuring optimal performance and maintainability.
+        </p>
+        <p>
+            Our development process is transparent and collaborative. We keep you informed at every stage, from initial 
+            planning and wireframing to design, development, testing, and deployment. Post-launch, we provide ongoing 
+            support and maintenance to ensure your website continues to perform at its best.
+        </p>
+    </div>
+    
+    <div class="cta-section">
+        <h2>Let's Build Something Amazing</h2>
+        <p>Ready to transform your web presence? Contact us today for a free consultation</p>
+        <a href="{% url 'home:contact' %}" class="cta-btn">Start Your Project</a>
+    </div>
+</section>
+{% endblock %}

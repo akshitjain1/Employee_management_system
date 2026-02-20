@@ -80,18 +80,21 @@ class LeaveApprovalForm(forms.ModelForm):
 class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
-        fields = ['assigned_to', 'title', 'description', 'priority', 'due_date']
+        fields = ['assigned_to', 'title', 'description', 'priority', 'due_date', 'attachment_file']
         widgets = {
             'assigned_to': forms.Select(attrs={'class': 'form-select'}),
             'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter task title'}),
             'description': forms.Textarea(attrs={'rows': 4, 'class': 'form-control', 'placeholder': 'Enter task description'}),
             'priority': forms.Select(attrs={'class': 'form-select'}),
             'due_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'attachment_file': forms.FileInput(attrs={'class': 'form-control', 'accept': '.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip'}),
         }
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['assigned_to'].queryset = User.objects.filter(role__in=['Employee', 'HR'], is_active=True)
+        self.fields['attachment_file'].required = False
+        self.fields['attachment_file'].help_text = 'Upload any reference documents (PDF, Word, Excel, PowerPoint, etc.)'
     
     def clean_due_date(self):
         due_date = self.cleaned_data.get('due_date')

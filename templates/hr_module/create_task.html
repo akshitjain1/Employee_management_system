@@ -16,7 +16,7 @@
                 <h5 class="mb-0">Task Details</h5>
             </div>
             <div class="card-body">
-                <form method="POST">
+                <form method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
                     
                     <div class="mb-3">
@@ -44,6 +44,12 @@
                             {{ form.due_date }}
                         </div>
                     </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Attachment (Optional)</label>
+                        {{ form.attachment_file }}
+                        <small class="form-text text-muted">{{ form.attachment_file.help_text }}</small>
+                    </div>
 
                     {% if form.errors %}
                     <div class="alert alert-danger">
@@ -58,7 +64,7 @@
                     {% endif %}
 
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                        <a href="{% url 'task_list' %}" class="btn btn-secondary">Cancel</a>
+                        <a href="{% url 'hr_module:task_list' %}" class="btn btn-secondary">Cancel</a>
                         <button type="submit" class="btn btn-primary">Create Task</button>
                     </div>
                 </form>
