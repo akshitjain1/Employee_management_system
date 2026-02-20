@@ -1,14 +1,18 @@
 from django.urls import path
 from . import views
 
+app_name = 'hr_module'
+
 urlpatterns = [
     path('dashboard/', views.hr_dashboard, name='hr_dashboard'),
+    path('profile/', views.hr_profile, name='hr_profile'),
     
     # Attendance URLs
     path('attendance/', views.attendance_list, name='attendance_list'),
     path('attendance/mark/', views.mark_attendance, name='mark_attendance'),
     path('attendance/bulk/', views.bulk_mark_attendance, name='bulk_mark_attendance'),
     path('attendance/<int:attendance_id>/edit/', views.edit_attendance, name='edit_attendance'),
+    path('attendance/<int:attendance_id>/verify/', views.verify_attendance, name='verify_attendance'),
     path('attendance/report/<int:user_id>/', views.employee_attendance_report, name='employee_attendance_report'),
     path('attendance/export/', views.export_attendance_csv, name='export_attendance_csv'),
     

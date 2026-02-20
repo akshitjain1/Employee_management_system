@@ -1,0 +1,248 @@
+{% extends 'home/base.html' %}
+{% load static %}
+
+{% block title %}CMS & E-Commerce Solutions - Invo Logic Software Services Pvt Ltd{% endblock %}
+
+{% block extra_styles %}
+<style>
+    :root {
+        --primary-dark: #001f2e;
+        --accent-blue: #00bcd4;
+        --glass-bg: rgba(255, 255, 255, 0.05);
+        --text-muted: #64748b;
+    }
+
+    .service-hero {
+        background: linear-gradient(135deg, #001f2e 0%, #003d5c 100%);
+        padding: 80px 2rem 100px;
+        text-align: center;
+        color: white;
+        position: relative;
+    }
+    
+    .service-hero .container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    .service-hero h1 {
+        font-size: 3.5rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        background: linear-gradient(to right, #fff, #00bcd4);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .service-hero p {
+        font-size: 1.3rem;
+        max-width: 700px;
+        margin: 0 auto;
+        opacity: 0.9;
+        line-height: 1.6;
+    }
+    
+    .service-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 60px 2rem;
+    }
+    
+    .section-tag {
+        color: var(--accent-blue);
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 2px;
+        display: block;
+        margin-bottom: 1rem;
+    }
+    
+    .service-section {
+        margin-bottom: 60px;
+    }
+    
+    .service-section h2 {
+        font-size: 2.2rem;
+        color: var(--primary-dark);
+        margin-bottom: 1.5rem;
+    }
+    
+    .service-section p {
+        font-size: 1.1rem;
+        line-height: 1.8;
+        color: #475569;
+        margin-bottom: 1rem;
+    }
+    
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2rem;
+        margin-top: 2.5rem;
+    }
+    
+    .feature-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 20px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        border: 1px solid rgba(0, 188, 212, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+    }
+    
+    .feature-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+    
+    .feature-card h3 {
+        color: var(--primary-dark);
+        margin-bottom: 0.75rem;
+        font-size: 1.3rem;
+    }
+    
+    .feature-card p {
+        color: #475569;
+        line-height: 1.6;
+        font-size: 1rem;
+    }
+    
+    .cta-section {
+        background: linear-gradient(135deg, var(--primary-dark), var(--accent-blue));
+        padding: 3rem 2.5rem;
+        border-radius: 20px;
+        text-align: center;
+        color: white;
+        margin-top: 4rem;
+    }
+    
+    .cta-section h2 {
+        font-size: 2.2rem;
+        margin-bottom: 1rem;
+        font-weight: 700;
+    }
+    
+    .cta-section p {
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+        opacity: 0.9;
+    }
+    
+    .cta-btn {
+        display: inline-block;
+        background: white;
+        color: var(--primary-dark);
+        padding: 14px 32px;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .cta-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(255,255,255,0.3);
+    }
+    
+    @media (max-width: 768px) {
+        .service-hero h1 { font-size: 2.5rem; }
+        .service-hero p { font-size: 1.1rem; }
+        .service-section h2 { font-size: 1.8rem; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Service Hero -->
+<section class="service-hero">
+    <div class="container">
+        <h1>CMS & E-Commerce Solutions</h1>
+        <p>Power Your Online Store with Robust E-Commerce Platforms</p>
+    </div>
+</section>
+
+<!-- Service Content -->
+<section class="service-content">
+    <div class="service-section">
+        <span class="section-tag">Our Expertise</span>
+        <h2>Comprehensive E-Commerce Development</h2>
+        <p>
+            Transform your business with our powerful e-commerce solutions. At Invo Logic, we build online stores that 
+            not only look great but also drive sales and provide exceptional shopping experiences. Whether you're starting 
+            a new online business or scaling an existing one, we have the expertise to create a platform that meets your needs.
+        </p>
+        <p>
+            Our e-commerce solutions include everything from product catalog management and secure payment gateways to 
+            inventory tracking and customer relationship management. We integrate with major payment processors, shipping 
+            providers, and third-party services to create a seamless ecosystem for your online business.
+        </p>
+    </div>
+    
+    <div class="service-section">
+        <span class="section-tag">Solutions We Offer</span>
+        <h2>Our E-Commerce Services</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🛒</div>
+                <h3>Custom E-Commerce Stores</h3>
+                <p>Fully customized online stores built from scratch to match your unique business requirements.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3>WooCommerce Development</h3>
+                <p>Powerful WordPress-based e-commerce solutions with extensive customization options.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🏪</div>
+                <h3>Shopify Solutions</h3>
+                <p>Complete Shopify store setup, theme customization, and app integration services.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💳</div>
+                <h3>Payment Gateway Integration</h3>
+                <p>Secure integration with PayPal, Stripe, Razorpay, and other payment processors.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📦</div>
+                <h3>Inventory Management</h3>
+                <p>Advanced inventory tracking, stock management, and automated reorder systems.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Analytics & Reporting</h3>
+                <p>Comprehensive sales reports, customer insights, and performance analytics dashboards.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="service-section">
+        <span class="section-tag">Why Us</span>
+        <h2>Content Management Systems</h2>
+        <p>
+            Take control of your website content with our CMS solutions. We specialize in WordPress, Drupal, Joomla, 
+            and custom CMS development. Our solutions empower you to easily update content, manage media, and maintain 
+            your website without technical knowledge.
+        </p>
+        <p>
+            From simple blogs to complex multi-site installations, we configure and customize CMS platforms to suit your 
+            workflow. We provide training and documentation to ensure your team can confidently manage your digital presence. 
+            Our CMS solutions are secure, scalable, and optimized for performance and SEO.
+        </p>
+    </div>
+    
+    <div class="cta-section">
+        <h2>Launch Your Online Store Today</h2>
+        <p>Let's create an e-commerce platform that drives sales and delights customers</p>
+        <a href="{% url 'home:contact' %}" class="cta-btn">Get Started</a>
+    </div>
+</section>
+{% endblock %}

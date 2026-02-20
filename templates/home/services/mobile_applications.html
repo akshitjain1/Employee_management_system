@@ -1,0 +1,249 @@
+{% extends 'home/base.html' %}
+{% load static %}
+
+{% block title %}Mobile Applications - Invo Logic Software Services Pvt Ltd{% endblock %}
+
+{% block extra_styles %}
+<style>
+    :root {
+        --primary-dark: #001f2e;
+        --accent-blue: #00bcd4;
+        --glass-bg: rgba(255, 255, 255, 0.05);
+        --text-muted: #64748b;
+    }
+
+    .service-hero {
+        background: linear-gradient(135deg, #001f2e 0%, #003d5c 100%);
+        padding: 80px 2rem 100px;
+        text-align: center;
+        color: white;
+        position: relative;
+    }
+    
+    .service-hero .container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    .service-hero h1 {
+        font-size: 3.5rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        background: linear-gradient(to right, #fff, #00bcd4);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .service-hero p {
+        font-size: 1.3rem;
+        max-width: 700px;
+        margin: 0 auto;
+        opacity: 0.9;
+        line-height: 1.6;
+    }
+    
+    .service-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 60px 2rem;
+    }
+    
+    .section-tag {
+        color: var(--accent-blue);
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 2px;
+        display: block;
+        margin-bottom: 1rem;
+    }
+    
+    .service-section {
+        margin-bottom: 60px;
+    }
+    
+    .service-section h2 {
+        font-size: 2.2rem;
+        color: var(--primary-dark);
+        margin-bottom: 1.5rem;
+    }
+    
+    .service-section p {
+        font-size: 1.1rem;
+        line-height: 1.8;
+        color: #475569;
+        margin-bottom: 1rem;
+    }
+    
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2rem;
+        margin-top: 2.5rem;
+    }
+    
+    .feature-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 20px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        border: 1px solid rgba(0, 188, 212, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+    }
+    
+    .feature-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+    
+    .feature-card h3 {
+        color: var(--primary-dark);
+        margin-bottom: 0.75rem;
+        font-size: 1.3rem;
+    }
+    
+    .feature-card p {
+        color: #475569;
+        line-height: 1.6;
+        font-size: 1rem;
+    }
+    
+    .cta-section {
+        background: linear-gradient(135deg, var(--primary-dark), var(--accent-blue));
+        padding: 3rem 2.5rem;
+        border-radius: 20px;
+        text-align: center;
+        color: white;
+        margin-top: 4rem;
+    }
+    
+    .cta-section h2 {
+        font-size: 2.2rem;
+        margin-bottom: 1rem;
+        font-weight: 700;
+    }
+    
+    .cta-section p {
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+        opacity: 0.9;
+    }
+    
+    .cta-btn {
+        display: inline-block;
+        background: white;
+        color: var(--primary-dark);
+        padding: 14px 32px;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .cta-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(255,255,255,0.3);
+    }
+    
+    @media (max-width: 768px) {
+        .service-hero h1 { font-size: 2.5rem; }
+        .service-hero p { font-size: 1.1rem; }
+        .service-section h2 { font-size: 1.8rem; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Service Hero -->
+<section class="service-hero">
+    <div class="container">
+        <h1>Mobile Applications</h1>
+        <p>Build Engaging Mobile Apps for iOS & Android</p>
+    </div>
+</section>
+
+<!-- Service Content -->
+<section class="service-content">
+    <div class="service-section">
+        <span class="section-tag">Our Expertise</span>
+        <h2>Expert Mobile App Development</h2>
+        <p>
+            Mobile is no longer optional – it's essential. With billions of smartphone users worldwide, mobile applications 
+            offer unprecedented opportunities to connect with customers, streamline operations, and grow your business. 
+            At Invo Logic, we create mobile applications that users love, combining intuitive design with powerful functionality.
+        </p>
+        <p>
+            Whether you need a native iOS app, an Android application, or a cross-platform solution, our experienced 
+            developers have the expertise to bring your vision to life. We follow platform-specific design guidelines 
+            and leverage the latest mobile technologies to ensure your app delivers exceptional performance and user experience.
+        </p>
+    </div>
+    
+    <div class="service-section">
+        <span class="section-tag">Solutions We Offer</span>
+        <h2>Our Mobile App Services</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <h3>iOS App Development</h3>
+                <p>Native iPhone and iPad applications built with Swift, optimized for performance and user experience.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🤖</div>
+                <h3>Android App Development</h3>
+                <p>Custom Android applications using Kotlin and Java for phones, tablets, and wearables.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔄</div>
+                <h3>Cross-Platform Development</h3>
+                <p>Build once, deploy everywhere with React Native, Flutter, or Xamarin frameworks.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎮</div>
+                <h3>Mobile Game Development</h3>
+                <p>Engaging mobile games with stunning graphics and addictive gameplay mechanics.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔔</div>
+                <h3>Push Notifications</h3>
+                <p>Keep users engaged with targeted push notifications and in-app messaging.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>App Analytics</h3>
+                <p>Track user behavior, engagement metrics, and app performance with integrated analytics.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="service-section">
+        <span class="section-tag">Why Us</span>
+        <h2>Why Choose Our Mobile App Development?</h2>
+        <p>
+            We don't just code – we create experiences. Our mobile app development process includes comprehensive planning, 
+            user research, wireframing, design, development, testing, and deployment. We ensure your app meets App Store 
+            and Google Play guidelines for seamless approval and publishing.
+        </p>
+        <p>
+            Security and performance are our top priorities. We implement industry-standard security practices to protect 
+            user data and optimize every aspect of your app for speed and efficiency. Post-launch, we provide ongoing 
+            maintenance, updates, and feature enhancements to keep your app competitive and users satisfied. From concept 
+            to App Store success, we're with you every step of the way.
+        </p>
+    </div>
+    
+    <div class="cta-section">
+        <h2>Ready to Launch Your Mobile App?</h2>
+        <p>Let's create an app that users will love and use every day</p>
+        <a href="{% url 'home:contact' %}" class="cta-btn">Build Your App</a>
+    </div>
+</section>
+{% endblock %}

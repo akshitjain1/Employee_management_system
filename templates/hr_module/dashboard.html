@@ -16,22 +16,22 @@
     <div class="card-body">
         <div class="row g-2">
             <div class="col-md-3">
-                <a href="{% url 'bulk_mark_attendance' %}" class="btn btn-primary w-100">
+                <a href="{% url 'hr_module:bulk_mark_attendance' %}" class="btn btn-primary w-100">
                     <i class="bi bi-calendar-check"></i> Mark Attendance
                 </a>
             </div>
             <div class="col-md-3">
-                <a href="{% url 'leave_requests' %}" class="btn btn-secondary w-100">
+                <a href="{% url 'hr_module:leave_requests' %}" class="btn btn-secondary w-100">
                     <i class="bi bi-calendar-x"></i> Leave Requests
                 </a>
             </div>
             <div class="col-md-3">
-                <a href="{% url 'create_task' %}" class="btn btn-success w-100">
+                <a href="{% url 'hr_module:create_task' %}" class="btn btn-success w-100">
                     <i class="bi bi-plus-circle"></i> Create Task
                 </a>
             </div>
             <div class="col-md-3">
-                <a href="{% url 'task_list' %}" class="btn btn-secondary w-100">
+                <a href="{% url 'hr_module:task_list' %}" class="btn btn-secondary w-100">
                     <i class="bi bi-list-task"></i> View Tasks
                 </a>
             </div>
@@ -144,20 +144,67 @@
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card stat-card danger">
+        <div class="card stat-card warning">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
-                        <div class="stat-label">Overdue Tasks</div>
-                        <div class="stat-value">{{ overdue_tasks }}</div>
-                        <small class="text-muted">Past due date</small>
+                        <div class="stat-label">Pending Attendance</div>
+                        <div class="stat-value">{{ pending_attendance_count }}</div>
+                        <small class="text-muted">Awaiting verification</small>
                     </div>
-                    <i class="bi bi-exclamation-triangle stat-icon"></i>
+                    <i class="bi bi-calendar-check stat-icon"></i>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Pending Attendance Verification -->
+{% if pending_attendance %}
+<div class="card mb-4 border-warning">
+    <div class="card-header bg-warning bg-opacity-10">
+        <i class="bi bi-clock-history me-2 text-warning"></i>
+        <strong>Pending Attendance Verification</strong>
+        <span class="badge bg-warning text-dark ms-2">{{ pending_attendance_count }}</span>
+        <a href="{% url 'hr_module:attendance_list' %}" class="btn btn-sm btn-outline-warning float-end">View All</a>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Employee</th>
+                        <th>Department</th>
+                        <th>Date</th>
+                        <th>Check In</th>
+                        <th>Notes</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for att in pending_attendance %}
+                    <tr>
+                        <td><strong>{{ att.user.get_full_name|default:att.user.username }}</strong></td>
+                        <td>{{ att.user.department|default:"N/A" }}</td>
+                        <td>{{ att.date }}</td>
+                        <td>{{ att.check_in_time|default:"-" }}</td>
+                        <td>{{ att.notes|default:"-"|truncatewords:6 }}</td>
+                        <td>
+                            <a href="{% url 'hr_module:verify_attendance' att.id %}" class="btn btn-sm btn-success">
+                                <i class="bi bi-check-lg"></i> Verify
+                            </a>
+                            <a href="{% url 'hr_module:edit_attendance' att.id %}" class="btn btn-sm btn-outline-secondary">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
 
 <!-- Charts and Recent Activity -->
 <div class="row g-3 mb-4">
@@ -183,7 +230,7 @@
                 {% if recent_leaves %}
                 <div class="list-group">
                     {% for leave in recent_leaves %}
-                    <a href="{% url 'leave_detail' leave.id %}" class="list-group-item list-group-item-action">
+                    <a href="{% url 'hr_module:leave_detail' leave.id %}" class="list-group-item list-group-item-action">
                         <div class="d-flex w-100 justify-content-between">
                             <h6 class="mb-1">{{ leave.user.first_name }} {{ leave.user.last_name }}</h6>
                             <small>{{ leave.applied_at|date:"M d, Y" }}</small>
@@ -222,7 +269,7 @@
                 <tbody>
                     {% for task in recent_tasks %}
                     <tr>
-                        <td><a href="{% url 'task_detail' task.id %}">{{ task.title }}</a></td>
+                        <td><a href="{% url 'hr_module:task_detail' task.id %}">{{ task.title }}</a></td>
                         <td>{{ task.assigned_to.first_name }} {{ task.assigned_to.last_name }}</td>
                         <td>
                             {% if task.priority == 'Urgent' %}

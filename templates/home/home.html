@@ -1,0 +1,555 @@
+{% extends 'home/base.html' %}
+{% load static %}
+
+{% block title %}Home - Invo Logic Software Services Pvt Ltd{% endblock %}
+
+{% block extra_styles %}
+<style>
+    :root {
+        --primary-navy: #001f2e;
+        --secondary-navy: #003d5c;
+        --accent-cyan: #00bcd4;
+        --text-slate: #64748b;
+        --glass-bg: rgba(255, 255, 255, 0.03);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    /* --- Hero Section --- */
+    .hero {
+        position: relative;
+        background: var(--secondary-navy);
+        background-image: url("{% static 'images/background.png' %}");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        color: white;
+        padding: 80px 0 180px; /* Adjusted for fixed header; space for stats overlap */
+        min-height: 700px;
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+    }
+    
+    .hero::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(0, 31, 46, 0.92) 0%, rgba(0, 61, 92, 0.8) 100%);
+        z-index: 1;
+    }
+
+    /* Professional Pattern Overlay */
+    .hero::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: radial-gradient(var(--accent-cyan) 0.5px, transparent 0.5px);
+        background-size: 30px 30px;
+        opacity: 0.1;
+        z-index: 1;
+        pointer-events: none;
+    }
+    
+    .hero-content {
+        position: relative;
+        z-index: 3;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 4rem;
+        align-items: center;
+    }
+    
+    .hero-left h1 {
+        font-size: 3.5rem;
+        font-weight: 800;
+        margin-bottom: 2rem;
+        line-height: 1.1;
+        letter-spacing: -1.5px;
+        min-height: 160px; /* Prevents layout jump during carousel change */
+    }
+    
+    .hero-headline {
+        display: none;
+        animation: heroTextIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    
+    .hero-headline.active { display: block; }
+    
+    @keyframes heroTextIn {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .hero-description-wrapper {
+        min-height: 140px;
+        margin-bottom: 3rem;
+    }
+    
+    .hero-description {
+        display: none;
+        font-size: 1.2rem;
+        line-height: 1.8;
+        color: rgba(255, 255, 255, 0.85);
+        animation: heroTextIn 0.8s 0.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    
+    .hero-description.active { display: block; }
+    
+    .hero-btn {
+        display: inline-block;
+        padding: 1.2rem 2.8rem;
+        background: var(--accent-cyan);
+        color: var(--primary-navy);
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+        box-shadow: 0 10px 25px rgba(0, 188, 212, 0.4);
+    }
+    
+    .hero-btn:hover {
+        background: white;
+        color: var(--primary-navy);
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(255, 255, 255, 0.2);
+    }
+
+    /* --- Stats Section --- */
+    .stats-section {
+        position: relative;
+        margin-top: -100px; /* Professional overlap */
+        z-index: 10;
+        padding: 0 0 80px 0;
+        background: transparent;
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1.5rem;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+    
+    .stat-item {
+        background: white;
+        padding: 3.5rem 2rem;
+        border-radius: 24px;
+        text-align: center;
+        box-shadow: 0 20px 50px rgba(0, 31, 46, 0.1);
+        border: 1px solid rgba(0, 188, 212, 0.1);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        backdrop-filter: blur(10px);
+    }
+    
+    .stat-item:hover {
+        transform: translateY(-12px);
+        border-color: var(--accent-cyan);
+        box-shadow: 0 25px 60px rgba(0, 188, 212, 0.15);
+    }
+    
+    .stat-icon-box {
+        width: 65px;
+        height: 65px;
+        background: rgba(0, 188, 212, 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+    }
+
+    .stat-icon-box i {
+        font-size: 1.9rem;
+        color: var(--accent-cyan);
+    }
+    
+    .stat-number {
+        font-size: 3.5rem;
+        font-weight: 800;
+        color: var(--primary-navy);
+        display: block;
+        line-height: 1;
+        margin-bottom: 0.5rem;
+        letter-spacing: -2px;
+    }
+    
+    .stat-label {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: var(--accent-cyan);
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+    }
+
+    /* --- Services Section --- */
+    .services {
+        padding: 120px 2rem;
+        background: #f8fafc;
+    }
+    
+    .section-header {
+        text-align: center;
+        max-width: 800px;
+        margin: 0 auto 5rem;
+    }
+
+    .section-title {
+        font-size: 2.8rem;
+        font-weight: 800;
+        color: var(--primary-navy);
+        margin-bottom: 1.5rem;
+        letter-spacing: -1px;
+    }
+
+    .section-subtitle {
+        color: var(--text-slate);
+        font-size: 1.15rem;
+        line-height: 1.8;
+    }
+    
+    .services-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+        gap: 2.5rem;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    .service-card {
+        background: white;
+        padding: 4rem 3rem;
+        border-radius: 30px;
+        border: 1px solid #edf2f7;
+        transition: 0.4s ease;
+        position: relative;
+    }
+    
+    .service-card:hover {
+        transform: translateY(-15px);
+        box-shadow: 0 40px 80px rgba(0, 31, 46, 0.08);
+        border-color: var(--accent-cyan);
+    }
+    
+    .service-card i.service-icon-fa {
+        font-size: 3rem;
+        margin-bottom: 2rem;
+        display: block;
+        background: linear-gradient(135deg, var(--primary-navy), var(--accent-cyan));
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    
+    .service-card h3 {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: var(--primary-navy);
+        margin-bottom: 1.2rem;
+    }
+    
+    .service-card p {
+        color: var(--text-slate);
+        line-height: 1.8;
+        font-size: 1.05rem;
+    }
+
+    /* --- Features Grid --- */
+    .features {
+        padding: 120px 2rem;
+        background: white;
+    }
+
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 3rem;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .feature-item {
+        text-align: center;
+        padding: 3rem 2rem;
+        border-radius: 20px;
+        background: #fcfcfc;
+        transition: 0.3s;
+    }
+
+    .feature-item:hover {
+        background: white;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+    }
+
+    .feature-item h4 {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: var(--primary-navy);
+        margin-bottom: 0.6rem;
+    }
+
+    .feature-item p {
+        color: var(--text-slate);
+        line-height: 1.7;
+        font-size: 0.95rem;
+        margin: 0;
+    }
+
+    .feature-icon-box {
+        width: 80px;
+        height: 80px;
+        background: var(--primary-navy);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 2rem;
+        font-size: 1.8rem;
+        box-shadow: 0 10px 20px rgba(0, 31, 46, 0.2);
+    }
+
+    /* --- CTA Section --- */
+    .cta {
+        background: var(--primary-navy);
+        padding: 120px 2rem;
+        text-align: center;
+        color: white;
+        position: relative;
+    }
+
+    .cta h2 {
+        font-size: 3.2rem;
+        font-weight: 800;
+        margin-bottom: 1.5rem;
+        letter-spacing: -1.5px;
+    }
+
+    @media (max-width: 768px) {
+        .hero { padding: 80px 1.5rem 120px; text-align: center; }
+        .hero-content { grid-template-columns: 1fr; }
+        .hero-left h1 { font-size: 2.8rem; min-height: auto; }
+        .hero-description { margin: 0 auto; }
+        .stats-grid { grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .stats-section { margin-top: -60px; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-content">
+        <div class="hero-left">
+            <h1>
+                <div class="hero-headline active">Responsive Website<br>Engineering</div>
+                <div class="hero-headline">Hire Top-Tier<br>Skilled Developers</div>
+                <div class="hero-headline">Native & Hybrid<br>Mobile Applications</div>
+                <div class="hero-headline">Scale Your Business<br>Digital Transformation</div>
+            </h1>
+            <div class="hero-description-wrapper">
+                <p class="hero-description active">Invo Logic designs websites that adapt to display on all devices from huge flat screens to smartphones in a very friendly manner. A professional website will create an excellent impression and communicate your competent approach to business.</p>
+                <p class="hero-description">Partner with Invo Logic to access a talented pool of developers skilled in cutting-edge technologies. We help you build exceptional software solutions with our experienced team committed to quality and innovation.</p>
+                <p class="hero-description">Transform your ideas into powerful mobile applications with Invo Logic. We specialize in creating innovative, user-friendly mobile apps for iOS and Android that engage users and drive business growth.</p>
+                <p class="hero-description">Invo Logic is your trusted partner for complete digital transformation. We deliver enterprise-grade software solutions that modernize your processes, enhance efficiency, and position you for success.</p>
+            </div>
+            <a href="{% url 'home:contact' %}" class="hero-btn">Consult Our Experts</a>
+        </div>
+        <div class="hero-right">
+            <!-- Space for professional SVG illustration or Lottie animation -->
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats-section">
+    <div class="stats-grid">
+        <div class="stat-item">
+            <div class="stat-icon-box">
+                <i class="fas fa-project-diagram"></i>
+            </div>
+            <span class="stat-number" data-count="200">0</span>
+            <span class="stat-label">Projects Completed</span>
+        </div>
+        <div class="stat-item">
+            <div class="stat-icon-box">
+                <i class="fas fa-users"></i>
+            </div>
+            <span class="stat-number" data-count="150">0</span>
+            <span class="stat-label">Happy Clients</span>
+        </div>
+        <div class="stat-item">
+            <div class="stat-icon-box">
+                <i class="fas fa-user-tie"></i>
+            </div>
+            <span class="stat-number" data-count="50">0</span>
+            <span class="stat-label">Team Members</span>
+        </div>
+        <div class="stat-item">
+            <div class="stat-icon-box">
+                <i class="fas fa-award"></i>
+            </div>
+            <span class="stat-number" data-count="8">0</span>
+            <span class="stat-label">Years Experience</span>
+        </div>
+    </div>
+</section>
+
+<!-- Services Section -->
+<section class="services">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Our Services</h2>
+            <p class="section-subtitle">Comprehensive software solutions tailored to meet your business needs and drive digital transformation through technical excellence.</p>
+        </div>
+        <div class="services-grid">
+            <div class="service-card">
+                <i class="fas fa-laptop-code service-icon-fa"></i>
+                <h3>Custom Software Development</h3>
+                <p>We build tailored software solutions that perfectly fit your business needs and help you achieve your goals efficiently.</p>
+            </div>
+            <div class="service-card">
+                <i class="fas fa-globe service-icon-fa"></i>
+                <h3>Web Application Development</h3>
+                <p>Create powerful, scalable, and responsive web applications using the latest technologies and industry best practices.</p>
+            </div>
+            <div class="service-card">
+                <i class="fas fa-mobile-alt service-icon-fa"></i>
+                <h3>Mobile App Development</h3>
+                <p>Build native and cross-platform mobile applications that provide excellent user experience across all digital devices.</p>
+            </div>
+            <div class="service-card">
+                <i class="fas fa-cloud service-icon-fa"></i>
+                <h3>Cloud Solutions</h3>
+                <p>Leverage cloud technologies to scale your business, improve operational efficiency, and reduce infrastructure costs.</p>
+            </div>
+            <div class="service-card">
+                <i class="fas fa-user-tie service-icon-fa"></i>
+                <h3>IT Consulting</h3>
+                <p>Get expert advice on technology strategy, digital transformation, and system architecture from our experienced team.</p>
+            </div>
+            <div class="service-card">
+                <i class="fas fa-tools service-icon-fa"></i>
+                <h3>Maintenance & Support</h3>
+                <p>Ensure your software runs smoothly with our comprehensive maintenance and dedicated technical support services.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features">
+    <div class="container">
+        <h2 class="section-title" style="text-align: center; margin-bottom: 5rem;">Why Choose Invo Logic?</h2>
+        <div class="features-grid">
+            <div class="feature-item">
+                <div class="feature-icon-box"><i class="fas fa-bolt"></i></div>
+                <h4>Fast Delivery</h4>
+                <p>Quick turnaround time without compromising on code quality or security.</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon-box"><i class="fas fa-bullseye"></i></div>
+                <h4>Quality Focused</h4>
+                <p>Committed to delivering high-quality, enterprise-grade digital solutions.</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon-box"><i class="fas fa-lightbulb"></i></div>
+                <h4>Innovative Solutions</h4>
+                <p>Using cutting-edge methodologies to solve complex business problems.</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon-box"><i class="fas fa-users"></i></div>
+                <h4>Expert Team</h4>
+                <p>Skilled professionals with years of specialized industry experience.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta">
+    <div style="position: relative; z-index: 2;">
+        <h2>Ready to Start Your Project?</h2>
+        <p style="margin-bottom: 2.5rem; opacity: 0.85; font-size: 1.25rem;">Let's work together to bring your ideas to life with professional engineering.</p>
+        <a href="{% url 'home:contact' %}" class="hero-btn" style="background: white; color: var(--primary-navy);">Get In Touch</a>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // --- Counter Animation ---
+    const statsSection = document.querySelector('.stats-section');
+    const counters = document.querySelectorAll('.stat-number');
+    let animated = false;
+
+    const startCounters = () => {
+        counters.forEach(counter => {
+            const target = +counter.getAttribute('data-count');
+            const increment = target / 100;
+            let current = 0;
+
+            const update = () => {
+                current += increment;
+                if (current < target) {
+                    counter.innerText = Math.ceil(current) + '+';
+                    requestAnimationFrame(update);
+                } else {
+                    counter.innerText = target + '+';
+                }
+            };
+            update();
+        });
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && !animated) {
+            startCounters();
+            animated = true;
+        }
+    }, { threshold: 0.4 });
+
+    if (statsSection) observer.observe(statsSection);
+
+    // --- Hero Carousel Transition ---
+    const headlines = document.querySelectorAll('.hero-headline');
+    const descriptions = document.querySelectorAll('.hero-description');
+    let currentIndex = 0;
+
+    const rotateHero = () => {
+        headlines[currentIndex].classList.remove('active');
+        descriptions[currentIndex].classList.remove('active');
+        
+        currentIndex = (currentIndex + 1) % headlines.length;
+        
+        headlines[currentIndex].classList.add('active');
+        descriptions[currentIndex].classList.add('active');
+    };
+
+    setInterval(rotateHero, 5000); // 5 Seconds Rotation
+
+    // --- Entrance Animations for Grid Items ---
+    const revealItems = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.service-card, .feature-item').forEach((el, i) => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(30px)';
+        el.style.transition = `all 0.6s ease ${i % 3 * 0.15}s`;
+        revealItems.observe(el);
+    });
+</script>
+{% endblock %}

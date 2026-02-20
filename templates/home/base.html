@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Invo Logic | Professional Software Solutions{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #001f2e;
+            --accent: #00bcd4;
+            --top-bar-red: #d32f2f;
+            --header-height: 80px;
+            --top-bar-height: 40px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            line-height: 1.6;
+            color: #334155;
+            background: #ffffff;
+            /* Prevents content from being hidden under the fixed header */
+            padding-top: calc(var(--header-height) + var(--top-bar-height));
+        }
+
+        /* Fixed Header Group */
+        .header-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            transition: var(--transition);
+        }
+
+        /* Top Contact Bar */
+        .top-bar {
+            background: var(--top-bar-red);
+            height: var(--top-bar-height);
+            color: white;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            transition: var(--transition);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 0 2rem;
+        }
+
+        /* Only flex where needed: top-bar and navbar */
+        .top-bar .container,
+        .navbar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .top-bar-info { display: flex; gap: 2rem; }
+        .top-bar-info i { margin-right: 8px; opacity: 0.9; }
+
+        /* Main Navbar */
+        .navbar {
+            background: var(--primary);
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            transition: var(--transition);
+        }
+
+        .navbar.scrolled {
+            height: 70px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        /* Brand Styling */
+        .logo-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .logo-box img {
+            height: 50px;
+            width: auto;
+            transition: var(--transition);
+        }
+
+        .brand-name {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        /* Nav Links */
+        .nav-menu { display: flex; align-items: center; gap: 0.5rem; }
+        
+        .nav-link {
+            color: rgba(255,255,255,0.85);
+            text-decoration: none;
+            padding: 0.75rem 1rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .nav-link:hover { color: var(--accent); background: rgba(255,255,255,0.05); }
+
+        /* Professional Dropdown */
+        .dropdown { position: relative; }
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: #002838;
+            min-width: 240px;
+            padding: 10px;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: var(--transition);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .dropdown:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 15px;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        .dropdown-item:hover { background: var(--accent); color: var(--primary); }
+        .dropdown-item i { width: 20px; color: var(--accent); }
+        .dropdown-item:hover i { color: var(--primary); }
+
+        .btn-login {
+            background: var(--accent);
+            color: var(--primary) !important;
+            margin-left: 1rem;
+        }
+
+        .btn-login:hover { background: white !important; transform: translateY(-2px); }
+
+        /* Floating WhatsApp */
+        .whatsapp-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #25d366;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            box-shadow: 0 10px 25px rgba(37,211,102,0.3);
+            z-index: 999;
+            transition: var(--transition);
+        }
+        .whatsapp-btn:hover { transform: scale(1.1); }
+
+        /* Hamburger Button */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 6px;
+            z-index: 1001;
+        }
+        .hamburger span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: white;
+            border-radius: 2px;
+            transition: var(--transition);
+        }
+
+        @media (max-width: 992px) {
+            .top-bar { display: none; }
+            body { padding-top: var(--header-height); }
+            .header-wrapper { top: 0; }
+
+            .hamburger { display: flex; }
+
+            .nav-menu {
+                display: none;
+                position: absolute;
+                top: var(--header-height);
+                left: 0;
+                right: 0;
+                background: var(--primary);
+                flex-direction: column;
+                padding: 1rem;
+                gap: 0.25rem;
+                border-top: 1px solid rgba(255,255,255,0.1);
+                box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+                z-index: 998;
+            }
+            .nav-menu.open { display: flex; }
+
+            .dropdown-menu {
+                position: static;
+                opacity: 1;
+                visibility: visible;
+                transform: none;
+                box-shadow: none;
+                border: none;
+                background: rgba(255,255,255,0.06);
+                display: none;
+                padding: 4px 0 4px 1rem;
+                margin-top: 4px;
+                min-width: auto;
+                border-radius: 8px;
+            }
+            .dropdown.open .dropdown-menu { display: block; }
+            .btn-login { margin-left: 0; text-align: center; }
+        }
+
+        {% block extra_styles %}{% endblock %}
+    </style>
+</head>
+<body>
+
+    <header class="header-wrapper" id="mainHeader">
+        <div class="top-bar">
+            <div class="container">
+                <div class="top-bar-info">
+                    <span><i class="fas fa-phone"></i> +91 9985222841</span>
+                    <span><i class="fas fa-envelope"></i> info@invologic.com</span>
+                </div>
+                <div class="top-bar-social">
+                    <a href="#" style="color:white; margin-left:15px;"><i class="fab fa-linkedin"></i></a>
+                    <a href="#" style="color:white; margin-left:15px;"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <nav class="navbar">
+            <div class="container">
+                <a href="{% url 'home:home' %}" class="logo-box">
+                    <img src="{% static 'images/logo.png' %}" alt="Logo">
+                    <span class="brand-name">Invo Logic</span>
+                </a>
+
+                <button class="hamburger" id="hamburger" aria-label="Toggle navigation" aria-expanded="false">
+                    <span></span><span></span><span></span>
+                </button>
+
+                <div class="nav-menu" id="navMenu">
+                    <a href="{% url 'home:home' %}" class="nav-link">Home</a>
+                    <a href="{% url 'home:about' %}" class="nav-link">About</a>
+                    
+                    <div class="dropdown">
+                        <a href="#" class="nav-link">Services <i class="fas fa-chevron-down" style="font-size: 0.7rem;"></i></a>
+                        <div class="dropdown-menu">
+                            <a href="{% url 'home:web_development' %}" class="dropdown-item"><i class="fas fa-code"></i> Web Development</a>
+                            <a href="{% url 'home:mobile_applications' %}" class="dropdown-item"><i class="fas fa-mobile-alt"></i> Mobile Apps</a>
+                            <a href="{% url 'home:cms_ecommerce' %}" class="dropdown-item"><i class="fas fa-shopping-cart"></i> E-Commerce</a>
+                            <a href="{% url 'home:digital_marketing' %}" class="dropdown-item"><i class="fas fa-bullhorn"></i> Marketing</a>
+                        </div>
+                    </div>
+
+                    <a href="{% url 'home:contact' %}" class="nav-link">Contact</a>
+                    <a href="{% url 'login' %}" class="nav-link btn-login">Login</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <a href="https://wa.me/919985222841" class="whatsapp-btn" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer style="background: linear-gradient(135deg, #001f2e 0%, #003d5c 100%); color: white; padding: 60px 2rem 30px;">
+        <div class="container" style="max-width: 1200px; margin: 0 auto;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 3rem; margin-bottom: 3rem;">
+                <!-- Company Info -->
+                <div>
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 1.5rem;">
+                        <img src="{% static 'images/logo.png' %}" alt="Logo" style="height: 40px;">
+                        <span style="font-size: 1.5rem; font-weight: 700;">Invo Logic</span>
+                    </div>
+                    <p style="line-height: 1.8; opacity: 0.9; margin-bottom: 1.5rem;">
+                        Your trusted partner for innovative software solutions. We transform ideas into powerful digital experiences.
+                    </p>
+                    <div style="display: flex; gap: 12px;">
+                        <a href="#" style="width: 40px; height: 40px; background: rgba(255,255,255,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; transition: all 0.3s;">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                        <a href="#" style="width: 40px; height: 40px; background: rgba(255,255,255,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; transition: all 0.3s;">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" style="width: 40px; height: 40px; background: rgba(255,255,255,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; transition: all 0.3s;">
+                            <i class="fab fa-facebook"></i>
+                        </a>
+                        <a href="#" style="width: 40px; height: 40px; background: rgba(255,255,255,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; transition: all 0.3s;">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div>
+                    <h3 style="font-size: 1.3rem; margin-bottom: 1.5rem; color: var(--accent);">Quick Links</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 0.75rem;">
+                            <a href="{% url 'home:home' %}" style="color: rgba(255,255,255,0.8); text-decoration: none; transition: all 0.3s; display: inline-block;">
+                                <i class="fas fa-chevron-right" style="font-size: 0.7rem; margin-right: 8px;"></i> Home
+                            </a>
+                        </li>
+                        <li style="margin-bottom: 0.75rem;">
+                            <a href="{% url 'home:about' %}" style="color: rgba(255,255,255,0.8); text-decoration: none; transition: all 0.3s; display: inline-block;">
+                                <i class="fas fa-chevron-right" style="font-size: 0.7rem; margin-right: 8px;"></i> About Us
+                            </a>
+                        </li>
+                        <li style="margin-bottom: 0.75rem;">
+                            <a href="{% url 'home:contact' %}" style="color: rgba(255,255,255,0.8); text-decoration: none; transition: all 0.3s; display: inline-block;">
+                                <i class="fas fa-chevron-right" style="font-size: 0.7rem; margin-right: 8px;"></i> Contact
+                            </a>
+                        </li>
+                        <li style="margin-bottom: 0.75rem;">
+                            <a href="{% url 'home:quote' %}" style="color: rgba(255,255,255,0.8); text-decoration: none; transition: all 0.3s; display: inline-block;">
+                                <i class="fas fa-chevron-right" style="font-size: 0.7rem; margin-right: 8px;"></i> Request Quote
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Services -->
+                <div>
+                    <h3 style="font-size: 1.3rem; margin-bottom: 1.5rem; color: var(--accent);">Services</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 0.75rem;">
+                            <a href="{% url 'home:web_development' %}" style="color: rgba(255,255,255,0.8); text-decoration: none; transition: all 0.3s; display: inline-block;">
+                                <i class="fas fa-chevron-right" style="font-size: 0.7rem; margin-right: 8px;"></i> Web Development
+                            </a>
+                        </li>
+                        <li style="margin-bottom: 0.75rem;">
+                            <a href="{% url 'home:mobile_applications' %}" style="color: rgba(255,255,255,0.8); text-decoration: none; transition: all 0.3s; display: inline-block;">
+                                <i class="fas fa-chevron-right" style="font-size: 0.7rem; margin-right: 8px;"></i> Mobile Applications
+                            </a>
+                        </li>
+                        <li style="margin-bottom: 0.75rem;">
+                            <a href="{% url 'home:cms_ecommerce' %}" style="color: rgba(255,255,255,0.8); text-decoration: none; transition: all 0.3s; display: inline-block;">
+                                <i class="fas fa-chevron-right" style="font-size: 0.7rem; margin-right: 8px;"></i> E-Commerce Solutions
+                            </a>
+                        </li>
+                        <li style="margin-bottom: 0.75rem;">
+                            <a href="{% url 'home:digital_marketing' %}" style="color: rgba(255,255,255,0.8); text-decoration: none; transition: all 0.3s; display: inline-block;">
+                                <i class="fas fa-chevron-right" style="font-size: 0.7rem; margin-right: 8px;"></i> Digital Marketing
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Contact Info -->
+                <div>
+                    <h3 style="font-size: 1.3rem; margin-bottom: 1.5rem; color: var(--accent);">Contact Us</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 1rem; display: flex; align-items: start; gap: 12px;">
+                            <i class="fas fa-map-marker-alt" style="color: var(--accent); margin-top: 4px;"></i>
+                            <span style="opacity: 0.9; line-height: 1.6;">Tech Park, Sector 62<br>Noida, UP - 201301</span>
+                        </li>
+                        <li style="margin-bottom: 1rem; display: flex; align-items: center; gap: 12px;">
+                            <i class="fas fa-phone" style="color: var(--accent);"></i>
+                            <span style="opacity: 0.9;">+91 9985222841</span>
+                        </li>
+                        <li style="margin-bottom: 1rem; display: flex; align-items: center; gap: 12px;">
+                            <i class="fas fa-envelope" style="color: var(--accent);"></i>
+                            <span style="opacity: 0.9;">info@invologic.com</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 2rem; text-align: center;">
+                <p style="opacity: 0.8; margin: 0;">
+                    &copy; 2026 Invo Logic Software Services Pvt Ltd. All rights reserved.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const header = document.querySelector('.navbar');
+        const wrapper = document.querySelector('.header-wrapper');
+        
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 40) {
+                header.classList.add('scrolled');
+                // Optional: Slide the top bar out on scroll for a pro "focus" effect
+                // wrapper.style.transform = 'translateY(-40px)';
+            } else {
+                header.classList.remove('scrolled');
+                // wrapper.style.transform = 'translateY(0)';
+            }
+        });
+
+        // Footer link hover effects
+        document.querySelectorAll('footer a').forEach(link => {
+            link.addEventListener('mouseenter', function() {
+                this.style.color = 'var(--accent)';
+                this.style.paddingLeft = '8px';
+            });
+            link.addEventListener('mouseleave', function() {
+                this.style.color = 'rgba(255,255,255,0.8)';
+                this.style.paddingLeft = '0';
+            });
+        });
+
+        // Social icon hover effects
+        document.querySelectorAll('footer a[style*="border-radius: 50%"]').forEach(icon => {
+            icon.addEventListener('mouseenter', function() {
+                this.style.background = 'var(--accent)';
+                this.style.transform = 'translateY(-3px)';
+            });
+            icon.addEventListener('mouseleave', function() {
+                this.style.background = 'rgba(255,255,255,0.1)';
+                this.style.transform = 'translateY(0)';
+            });
+        });
+
+        // Hamburger menu
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('navMenu');
+        if (hamburger && navMenu) {
+            hamburger.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isOpen = navMenu.classList.toggle('open');
+                hamburger.setAttribute('aria-expanded', isOpen);
+            });
+            // Mobile dropdown toggle
+            navMenu.querySelectorAll('.dropdown > .nav-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    if (window.innerWidth <= 992) {
+                        e.preventDefault();
+                        link.parentElement.classList.toggle('open');
+                    }
+                });
+            });
+            // Close on outside click
+            document.addEventListener('click', (e) => {
+                if (!hamburger.contains(e.target) && !navMenu.contains(e.target)) {
+                    navMenu.classList.remove('open');
+                    hamburger.setAttribute('aria-expanded', 'false');
+                }
+            });
+        }
+    </script>
+    
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

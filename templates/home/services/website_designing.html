@@ -1,0 +1,252 @@
+{% extends 'home/base.html' %}
+{% load static %}
+
+{% block title %}Website Designing - Invo Logic Software Services Pvt Ltd{% endblock %}
+
+{% block extra_styles %}
+<style>
+    :root {
+        --primary-dark: #001f2e;
+        --accent-blue: #00bcd4;
+        --glass-bg: rgba(255, 255, 255, 0.05);
+        --text-muted: #64748b;
+    }
+
+    .service-hero {
+        background: linear-gradient(135deg, #001f2e 0%, #003d5c 100%);
+        padding: 80px 2rem 100px;
+        text-align: center;
+        color: white;
+        position: relative;
+    }
+    
+    .service-hero .container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    .service-hero h1 {
+        font-size: 3.5rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        background: linear-gradient(to right, #fff, #00bcd4);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .service-hero p {
+        font-size: 1.3rem;
+        max-width: 700px;
+        margin: 0 auto;
+        opacity: 0.9;
+        line-height: 1.6;
+    }
+    
+    .service-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 60px 2rem;
+    }
+    
+    .section-tag {
+        color: var(--accent-blue);
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 2px;
+        display: block;
+        margin-bottom: 1rem;
+    }
+    
+    .service-section {
+        margin-bottom: 60px;
+    }
+    
+    .service-section h2 {
+        font-size: 2.2rem;
+        color: var(--primary-dark);
+        margin-bottom: 1.5rem;
+    }
+    
+    .service-section p {
+        font-size: 1.1rem;
+        line-height: 1.8;
+        color: #475569;
+        margin-bottom: 1rem;
+    }
+    
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2rem;
+        margin-top: 2.5rem;
+    }
+    
+    .feature-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 20px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        border: 1px solid rgba(0, 188, 212, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+    }
+    
+    .feature-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+    
+    .feature-card h3 {
+        color: var(--primary-dark);
+        margin-bottom: 0.75rem;
+        font-size: 1.3rem;
+    }
+    
+    .feature-card p {
+        color: #475569;
+        line-height: 1.6;
+        font-size: 1rem;
+    }
+    
+    .cta-section {
+        background: linear-gradient(135deg, var(--primary-dark), var(--accent-blue));
+        padding: 3rem 2.5rem;
+        border-radius: 20px;
+        text-align: center;
+        color: white;
+        margin-top: 4rem;
+    }
+    
+    .cta-section h2 {
+        font-size: 2.2rem;
+        margin-bottom: 1rem;
+        font-weight: 700;
+    }
+    
+    .cta-section p {
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+        opacity: 0.9;
+    }
+    
+    .cta-btn {
+        display: inline-block;
+        background: white;
+        color: var(--primary-dark);
+        padding: 14px 32px;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .cta-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(255,255,255,0.3);
+    }
+    
+    @media (max-width: 768px) {
+        .service-hero h1 { font-size: 2.5rem; }
+        .service-hero p { font-size: 1.1rem; }
+        .service-section h2 { font-size: 1.8rem; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Service Hero -->
+<section class="service-hero">
+    <div class="container">
+        <h1>Website Designing</h1>
+        <p>Create Beautiful, User-Centric Website Designs</p>
+    </div>
+</section>
+
+<!-- Service Content -->
+<section class="service-content">
+    <div class="service-section">
+        <span class="section-tag">Our Expertise</span>
+        <h2>Creative Website Design Services</h2>
+        <p>
+            First impressions matter. Your website design is often the first interaction potential customers have with your 
+            brand. At Invo Logic, we create visually stunning, user-friendly designs that captivate visitors and convert 
+            them into customers. Our design philosophy combines aesthetics with functionality to deliver websites that are 
+            both beautiful and effective.
+        </p>
+        <p>
+            We follow a user-centered design approach, conducting research to understand your audience and their needs. 
+            Every design element is carefully crafted to enhance user experience, guide visitors through your content, and 
+            encourage action. From color schemes and typography to layout and navigation, we ensure every aspect of your 
+            website design aligns with your brand identity and business goals.
+        </p>
+    </div>
+    
+    <div class="service-section">
+        <span class="section-tag">Solutions We Offer</span>
+        <h2>Our Design Services</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🎨</div>
+                <h3>UI/UX Design</h3>
+                <p>Intuitive interfaces and seamless user experiences that delight visitors and drive engagement.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <h3>Responsive Design</h3>
+                <p>Mobile-first designs that look perfect on all devices, from smartphones to desktop screens.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🖌️</div>
+                <h3>Brand Identity Design</h3>
+                <p>Cohesive visual identities including logos, color schemes, and typography systems.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3>Landing Page Design</h3>
+                <p>High-converting landing pages optimized for specific campaigns and call-to-actions.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔄</div>
+                <h3>Website Redesign</h3>
+                <p>Modernize outdated websites with fresh designs that reflect current trends and standards.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Prototyping & Wireframing</h3>
+                <p>Interactive prototypes and wireframes to visualize and refine designs before development.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="service-section">
+        <span class="section-tag">Why Us</span>
+        <h2>Our Design Process</h2>
+        <p>
+            We begin every project with thorough research and discovery, learning about your business, competitors, and 
+            target audience. Our designers create mood boards and wireframes to establish the visual direction before 
+            moving to high-fidelity mockups. We iterate based on your feedback, ensuring the final design exceeds your 
+            expectations.
+        </p>
+        <p>
+            Our designs aren't just pretty pictures – they're strategic tools built to achieve your business objectives. 
+            We consider factors like conversion optimization, accessibility standards, and loading performance. Every 
+            design decision is made with purpose, from the placement of call-to-action buttons to the choice of imagery 
+            and visual hierarchy.
+        </p>
+    </div>
+    
+    <div class="cta-section">
+        <h2>Transform Your Website Design</h2>
+        <p>Let's create a stunning website that represents your brand and drives results</p>
+        <a href="{% url 'home:contact' %}" class="cta-btn">Get Your Design</a>
+    </div>
+</section>
+{% endblock %}

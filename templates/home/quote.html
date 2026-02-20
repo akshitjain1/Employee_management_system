@@ -1,0 +1,318 @@
+{% extends 'home/base.html' %}
+{% load static %}
+
+{% block title %}Request a Quote - Invo Logic Software Services Pvt Ltd{% endblock %}
+
+{% block extra_styles %}
+<style>
+    :root {
+        --primary-dark: #001f2e;
+        --accent-blue: #00bcd4;
+        --glass-bg: rgba(255, 255, 255, 0.05);
+        --text-muted: #64748b;
+    }
+
+    .quote-hero {
+        background: linear-gradient(135deg, #001f2e 0%, #003d5c 100%);
+        padding: 80px 2rem 100px;
+        text-align: center;
+        color: white;
+        position: relative;
+    }
+    
+    .quote-hero .container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    .quote-hero h1 {
+        font-size: 3.5rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        background: linear-gradient(to right, #fff, #00bcd4);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .quote-hero p {
+        font-size: 1.3rem;
+        max-width: 700px;
+        margin: 0 auto;
+        opacity: 0.9;
+        line-height: 1.6;
+    }
+    
+    .quote-content {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 60px 2rem;
+    }
+    
+    .section-tag {
+        color: var(--accent-blue);
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 2px;
+        display: block;
+        margin-bottom: 1rem;
+        text-align: center;
+    }
+    
+    .quote-form-wrapper {
+        background: white;
+        padding: 2.5rem;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        border: 1px solid rgba(0, 188, 212, 0.1);
+    }
+    
+    .form-intro {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+    
+    .form-intro h2 {
+        font-size: 2.2rem;
+        color: var(--primary-dark);
+        margin-bottom: 1rem;
+        font-weight: 700;
+    }
+    
+    .form-intro p {
+        font-size: 1.1rem;
+        color: #475569;
+        line-height: 1.7;
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: var(--primary-dark);
+        font-weight: 600;
+        font-size: 0.95rem;
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: #f8fafc;
+        font-family: inherit;
+    }
+    
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: var(--accent-blue);
+        background: white;
+    }
+    
+    .form-group textarea {
+        resize: vertical;
+        min-height: 150px;
+    }
+    
+    .form-group select {
+        cursor: pointer;
+    }
+    
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+    }
+    
+    .submit-btn {
+        background: linear-gradient(135deg, var(--accent-blue), #0097a7);
+        color: white;
+        padding: 14px 32px;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        width: 100%;
+    }
+    
+    .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 188, 212, 0.3);
+    }
+    
+    .benefits {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 2rem;
+        margin: 4rem 0 3rem 0;
+    }
+    
+    .benefit-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 20px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        border: 1px solid rgba(0, 188, 212, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .benefit-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+    }
+    
+    .benefit-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+    
+    .benefit-card h3 {
+        color: var(--primary-dark);
+        margin-bottom: 0.75rem;
+        font-size: 1.3rem;
+        font-weight: 700;
+    }
+    
+    .benefit-card p {
+        color: #475569;
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+    
+    @media (max-width: 768px) {
+        .quote-hero h1 { font-size: 2.5rem; }
+        .quote-hero p { font-size: 1.1rem; }
+        .form-row { grid-template-columns: 1fr; }
+        .quote-form-wrapper { padding: 2rem 1.5rem; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Quote Hero -->
+<section class="quote-hero">
+    <div class="container">
+        <h1>Request a Quote</h1>
+        <p>Tell us about your project and get a free, no-obligation quote</p>
+    </div>
+</section>
+
+<!-- Quote Content -->
+<section class="quote-content">
+    <div class="benefits">
+        <div class="benefit-card">
+            <div class="benefit-icon">⚡</div>
+            <h3>Quick Response</h3>
+            <p>Get a detailed quote within 24 hours</p>
+        </div>
+        <div class="benefit-card">
+            <div class="benefit-icon">💰</div>
+            <h3>Competitive Pricing</h3>
+            <p>Fair, transparent pricing with no hidden costs</p>
+        </div>
+        <div class="benefit-card">
+            <div class="benefit-icon">🤝</div>
+            <h3>No Obligation</h3>
+            <p>Free consultation with no commitment required</p>
+        </div>
+    </div>
+    
+    <div class="quote-form-wrapper">
+        <div class="form-intro">
+            <span class="section-tag">Request Information</span>
+            <h2>Get Your Free Quote</h2>
+            <p>Fill out the form below and our team will get back to you with a customized proposal</p>
+        </div>
+        
+        <form method="post" action="">
+            {% csrf_token %}
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="first_name">First Name *</label>
+                    <input type="text" id="first_name" name="first_name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="last_name">Last Name *</label>
+                    <input type="text" id="last_name" name="last_name" required>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="email">Email Address *</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">Phone Number *</label>
+                    <input type="tel" id="phone" name="phone" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="company">Company Name</label>
+                <input type="text" id="company" name="company">
+            </div>
+            
+            <div class="form-group">
+                <label for="service">Service Required *</label>
+                <select id="service" name="service" required>
+                    <option value="">Select a Service</option>
+                    <option value="application_development">Application Development</option>
+                    <option value="web_development">Web Development</option>
+                    <option value="cms_ecommerce">CMS & E-Commerce</option>
+                    <option value="digital_marketing">Digital Marketing</option>
+                    <option value="website_designing">Website Designing</option>
+                    <option value="mobile_applications">Mobile Applications</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="budget">Estimated Budget *</label>
+                <select id="budget" name="budget" required>
+                    <option value="">Select Budget Range</option>
+                    <option value="under_5k">Under $5,000</option>
+                    <option value="5k_10k">$5,000 - $10,000</option>
+                    <option value="10k_25k">$10,000 - $25,000</option>
+                    <option value="25k_50k">$25,000 - $50,000</option>
+                    <option value="over_50k">Over $50,000</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="timeline">Expected Timeline *</label>
+                <select id="timeline" name="timeline" required>
+                    <option value="">Select Timeline</option>
+                    <option value="urgent">Urgent (1-2 weeks)</option>
+                    <option value="short">Short Term (1-2 months)</option>
+                    <option value="medium">Medium Term (3-6 months)</option>
+                    <option value="long">Long Term (6+ months)</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="project_details">Project Details *</label>
+                <textarea id="project_details" name="project_details" required placeholder="Please describe your project requirements, goals, and any specific features you need..."></textarea>
+            </div>
+            
+            <button type="submit" class="submit-btn">Request Quote</button>
+        </form>
+    </div>
+</section>
+{% endblock %}

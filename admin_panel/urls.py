@@ -1,8 +1,11 @@
 from django.urls import path
 from . import views
 
+app_name = 'admin_panel'
+
 urlpatterns = [
     path('dashboard/', views.admin_dashboard, name='admin_dashboard'),
+    path('profile/', views.admin_profile, name='admin_profile'),
     path('create-employee/', views.create_employee, name='create_employee'),
     path('employees/', views.employee_list, name='employee_list'),
     path('employee/<int:user_id>/', views.employee_detail, name='employee_detail'),

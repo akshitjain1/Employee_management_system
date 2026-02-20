@@ -84,10 +84,18 @@
         </div>
         {% endif %}
 
+        <!-- HR Attachment File -->
+        {% if task.attachment_file %}
+        <div class="alert alert-info mt-3 mb-0" role="alert">
+            <i class="bi bi-file-earmark-arrow-down"></i> <strong>Task Attachment from HR:</strong> 
+            <a href="{{ task.attachment_file.url }}" target="_blank" class="alert-link" download>Download File</a>
+        </div>
+        {% endif %}
+
         <!-- Submission File -->
         {% if task.submission_file %}
         <div class="alert alert-success mt-3 mb-0" role="alert">
-            <i class="bi bi-paperclip"></i> <strong>Submitted File:</strong> 
+            <i class="bi bi-paperclip"></i> <strong>Your Submitted File:</strong> 
             <a href="{{ task.submission_file.url }}" target="_blank" class="alert-link">Download</a>
         </div>
         {% endif %}

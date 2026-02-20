@@ -8,7 +8,7 @@
         <h2><i class="bi bi-calendar-x"></i> Leave Requests</h2>
     </div>
     <div class="col-md-6 text-end">
-        <a href="{% url 'apply_leave' %}" class="btn btn-primary">
+        <a href="{% url 'hr_module:apply_leave' %}" class="btn btn-primary">
             <i class="bi bi-plus-circle"></i> Apply Leave
         </a>
     </div>
@@ -81,7 +81,7 @@
                         </td>
                         <td>{{ leave.applied_at|date:"M d, Y" }}</td>
                         <td>
-                            <a href="{% url 'leave_detail' leave.id %}" class="btn btn-sm btn-primary">
+                            <a href="{% url 'hr_module:leave_detail' leave.id %}" class="btn btn-sm btn-primary">
                                 <i class="bi bi-eye"></i> View
                             </a>
                         </td>

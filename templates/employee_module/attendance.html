@@ -16,15 +16,11 @@
         <form method="post" action="{% url 'employee:mark_attendance' %}">
             {% csrf_token %}
             <div class="row g-3 mb-3">
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <label class="form-label fw-semibold">Check-in Time <span class="text-danger">*</span></label>
                     <input type="time" name="check_in_time" required class="form-control">
                 </div>
-                <div class="col-md-4">
-                    <label class="form-label fw-semibold">Check-out Time <span class="text-danger">*</span></label>
-                    <input type="time" name="check_out_time" required class="form-control">
-                </div>
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <label class="form-label fw-semibold">Notes (Optional)</label>
                     <input type="text" name="notes" class="form-control" placeholder="Any remarks...">
                 </div>
@@ -73,8 +69,6 @@
                         <th>Date</th>
                         <th>Status</th>
                         <th>Check In</th>
-                        <th>Check Out</th>
-                        <th>Working Hours</th>
                         <th>Verification</th>
                         <th>Notes</th>
                     </tr>
@@ -97,14 +91,6 @@
                             {% endif %}
                         </td>
                         <td>{{ attendance.check_in_time|default:"-" }}</td>
-                        <td>{{ attendance.check_out_time|default:"-" }}</td>
-                        <td>
-                            {% if attendance.get_working_hours %}
-                                {{ attendance.get_working_hours }} hrs
-                            {% else %}
-                                -
-                            {% endif %}
-                        </td>
                         <td>
                             {% if attendance.is_verified %}
                                 <span class="badge bg-success"><i class="bi bi-check-circle"></i> Verified</span>
